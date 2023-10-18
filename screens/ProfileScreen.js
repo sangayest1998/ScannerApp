@@ -12,18 +12,18 @@ import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, MaterialCommunityIcons ,  Zocial, Entypo , FontAwesome,MaterialIcons } from '@expo/vector-icons';
 
-const USER_DATA_BASE_URL = 'http://192.168.0.119:8000/profile'; 
-const PROFILE_IMAGE_BASE_URL = 'http://192.168.0.119:8000/update/profile-picture';
-const PROFILE_PICTURE_BASE_URL = 'http://192.168.0.119:8000/get/profile-picture';
+// const USER_DATA_BASE_URL = 'http://192.168.0.119:8000/profile'; 
+// const PROFILE_IMAGE_BASE_URL = 'http://192.168.0.119:8000/update/profile-picture';
+// const PROFILE_PICTURE_BASE_URL = 'http://192.168.0.119:8000/get/profile-picture';
 
 //const USER_DATA_BASE_URL = 'http://202.144.153.106:8000/profile';
 //const PROFILE_IMAGE_BASE_URL = 'http://202.144.153.106:8000/update/profile-picture';
 //const PROFILE_PICTURE_BASE_URL = 'http://202.144.153.106:8000/get/profile-picture';
 
 
-// const USER_DATA_BASE_URL = 'http://192.168.128.8:8000/profile';
-// const PROFILE_IMAGE_BASE_URL = 'http://192.168.128.8:8000/update/profile-picture';
-// const PROFILE_PICTURE_BASE_URL = 'http://192.168.128.8:8000/get/profile-picture';
+const USER_DATA_BASE_URL = 'http://192.168.128.8:8000/profile';
+const PROFILE_IMAGE_BASE_URL = 'http://192.168.128.8:8000/update/profile-picture';
+const PROFILE_PICTURE_BASE_URL = 'http://192.168.128.8:8000/get/profile-picture';
 
 const ProfileScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);

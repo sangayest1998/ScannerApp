@@ -26,7 +26,7 @@ export default function EnterOTPScreen() {
 
       // Replace 'http://192.168.0.119:8000/' with your actual API endpoint
       const enteredOTP = otp.join('');
-      const response = await fetch(`http://192.168.0.119:8000/enter-otp?cid=${cid}`, {
+      const response = await fetch(`http://192.168.128.8:8000/enter-otp?cid=${cid}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
