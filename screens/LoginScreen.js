@@ -18,9 +18,9 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 
-//  const BASE_URL = 'http://192.168.0.119:8000'; // Update with your FastAPI server URL
+ const BASE_URL = 'http://192.168.0.119:8000'; // Update with your FastAPI server URL
 // const BASE_URL = 'http://192.168.128.8:8000'; 
-const BASE_URL = 'http://202.144.153.106:8000'; 
+// const BASE_URL = 'http://202.144.153.106:8000'; 
 
 
 const { width, height } = Dimensions.get('window');
@@ -269,11 +269,11 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     alignSelf: 'center',
-    marginBottom: 40,
-    marginLeft:150
+    marginBottom: 50,
+    
   },
   forgotPasswordText: {
-    color: '#f7be6d',
+    color: '#4267B2',
     fontSize: 15,
   },
 
