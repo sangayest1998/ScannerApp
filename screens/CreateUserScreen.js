@@ -1,12 +1,32 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
 
 const CreateUserScreen = () => {
   return (
-    <View>
-      <Text>CreateUserScreen</Text>
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder='Enter Your CiD No'
+      />
     </View>
-  )
-}
+  );
+};
 
-export default CreateUserScreen
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  input: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    padding: 10,
+    fontSize: 16,
+  },
+});
+
+export default CreateUserScreen;
