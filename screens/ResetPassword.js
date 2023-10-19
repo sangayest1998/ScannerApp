@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 export default function ResetPasswordScreen() {
@@ -8,6 +8,7 @@ export default function ResetPasswordScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -29,6 +30,7 @@ export default function ResetPasswordScreen() {
       }
 
       setIsLoading(true);
+      setPasswordMismatch(false);
 
       const resetData = {
         otp_code: otp,
@@ -39,7 +41,7 @@ export default function ResetPasswordScreen() {
       try {
         console.log('Sending reset request:', resetData);
 
-        const response = await fetch('http://192.168.128.8:8000/reset-password', {
+        const response = await fetch('http://202.144.153.106:8000/reset-password', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -52,7 +54,6 @@ export default function ResetPasswordScreen() {
 
         if (response.ok) {
           Alert.alert('Password reset was successful.');
-          // Navigate to the login screen upon successful reset
           navigation.navigate('Login');
         } else {
           const responseData = await response.json();
@@ -66,7 +67,7 @@ export default function ResetPasswordScreen() {
         setIsLoading(false);
       }
     } else {
-      Alert.alert('Error', 'Passwords do not match. Please try again.');
+      setPasswordMismatch(true);
     }
   };
 
@@ -75,7 +76,7 @@ export default function ResetPasswordScreen() {
       <View style={styles.squareBox} />
       <Text style={styles.title}>Reset Password</Text>
 
-      <View style={styles.passwordContainer}>
+      <View style={[styles.passwordContainer, passwordMismatch && styles.errorBorder]}>
         <TextInput
           value={newPassword}
           onChangeText={text => setNewPassword(text)}
@@ -89,7 +90,7 @@ export default function ResetPasswordScreen() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.passwordContainer}>
+      <View style={[styles.passwordContainer, passwordMismatch && styles.errorBorder]}>
         <TextInput
           value={confirmPassword}
           onChangeText={text => setConfirmPassword(text)}
@@ -103,8 +104,10 @@ export default function ResetPasswordScreen() {
         </TouchableOpacity>
       </View>
 
+      {passwordMismatch && <Text style={styles.errorText}>Passwords do not match. Please try again.</Text>}
+
       <TouchableOpacity style={styles.loginButton} onPress={handleResetPassword} disabled={isLoading}>
-        <Text style={styles.loginButtonText}>Reset Password</Text>
+        {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.loginButtonText}>Reset Password</Text>}
       </TouchableOpacity>
     </View>
   );
@@ -115,6 +118,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#fff',
+    
   },
   squareBox: {
     width: '100%',
@@ -138,6 +142,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '80%',
   },
+  errorBorder: {
+    borderColor: 'red',
+    borderWidth: 1,
+  },
   passwordInput: {
     flex: 1,
   },
@@ -160,5 +168,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
 });

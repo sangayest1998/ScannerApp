@@ -19,8 +19,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 
 //  const BASE_URL = 'http://192.168.0.119:8000'; // Update with your FastAPI server URL
-const BASE_URL = 'http://192.168.128.8:8000'; 
-// const BASE_URL = 'http://202.144.153.106:8000'; 
+
+// const BASE_URL = 'http://192.168.128.8:8000'; 
+
+const BASE_URL = 'http://202.144.153.106:8000/login'; 
 
 
 const { width, height } = Dimensions.get('window');
