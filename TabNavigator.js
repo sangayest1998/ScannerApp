@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { StyleSheet } from 'react-native'; 
 import { StatusBar } from 'react-native';
-
 import ScanScreen from './screens/ScanScreen';
 import ReportScreen from './screens/report/ReportScreen';
 import CreateUserScreen from './screens/CreateUserScreen';

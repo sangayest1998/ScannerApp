@@ -2,12 +2,12 @@
   "cli": {
     "version": ">= 5.4.0",
     "requireCommit": true
+
   },
   "build": {
     "development": {
       "developmentClient": true,
       "distribution": "internal"
-      
     },
     "androidapk": {
       "android": {
@@ -15,7 +15,6 @@
       }
     }, 
     
-
     "preview": {
       "distribution": "internal"
     },
