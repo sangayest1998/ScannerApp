@@ -14,11 +14,10 @@ import { useNavigation } from "@react-navigation/native";
 
 const ForgotPasswordScreen = () => {
   const [cid, setCid] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // State to control loading indicator
+  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
   const [successMessage, setSuccessMessage] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
-
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   useEffect(() => {
@@ -43,28 +42,21 @@ const ForgotPasswordScreen = () => {
 
   const handleCIDSubmit = async () => {
     try {
-      setIsLoading(true); // Show loading indicator while sending the request
+      setIsLoading(true);
 
-      // Replace with your API endpoint
-      const response = await fetch(
-        "http://192.168.128.8:8000/forgot-password",
-        {
-          // const response = await fetch('http://192.168.128.8:8000/forgot-password', {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ cid: parseInt(cid) }),
-        }
-      );
+      const response = await fetch('http://192.168.128.8:8000/forgot-password', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cid: parseInt(cid) }),
+      });
 
       if (response.ok) {
         setSuccessMessage("Password reset email sent successfully.");
-        // Request was successful, navigate to the OTP screen
         navigation.navigate("otp", { cid: cid });
       } else {
         setErrorMessage("Failed to send CID for password reset.");
-        // Log the response status and error message
         console.error(
           "Failed to send CID for password reset. Response status:",
           response.status
@@ -76,54 +68,41 @@ const ForgotPasswordScreen = () => {
       setErrorMessage("An error occurred while sending the request.");
       console.error("An error occurred while sending the request:", error);
     } finally {
-      setIsLoading(false); // Hide loading indicator
+      setIsLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.squareBox} />
-      {/* Image container */}
       <View style={styles.imageContainer}>
         <Image source={require("../assets/logo.png")} style={styles.image} />
       </View>
-
-      {/* Title */}
       <Text style={styles.title}>Forgot Password?</Text>
-
-      {/* Input for CID */}
       <TextInput
         style={styles.input}
         placeholder="Enter your CID"
         value={cid}
-        onChangeText={(text) => setCid(text)} // Update the state when text is entered
-        editable={!isLoading} // Disable input while loading
+        onChangeText={(text) => setCid(text)}
+        editable={!isLoading}
       />
-
-      {/* Success message */}
       {successMessage && (
         <Text style={styles.successMessage}>{successMessage}</Text>
       )}
-
-      {/* Error message */}
       {errorMessage && <Text style={styles.errorMessage}>{errorMessage}</Text>}
-
-      {/* Submit button with loading indicator */}
       <TouchableOpacity
         style={styles.buttonContainer}
         onPress={isLoading ? null : handleCIDSubmit}
         disabled={isLoading}
       >
-        <View
-          style={{
-            backgroundColor: isLoading ? "#ccc" : "orange",
-            padding: 8,
-            borderRadius: 100,
-            width: 300,
-            marginTop: 30,
-            marginBottom: -30,
-          }}
-        >
+        <View style={{
+          backgroundColor: isLoading ? "#ccc" : "orange",
+          padding: 8,
+          borderRadius: 100,
+          width: 300,
+          marginTop: 30,
+          marginBottom: -30,
+        }}>
           {isLoading ? (
             <ActivityIndicator size="small" color="orange" />
           ) : (
@@ -133,8 +112,6 @@ const ForgotPasswordScreen = () => {
           )}
         </View>
       </TouchableOpacity>
-
-      {/* Conditional rendering of squareBox1 based on input focus state */}
       {!isKeyboardVisible && <View style={styles.squareBox1} />}
     </View>
   );
