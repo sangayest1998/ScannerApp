@@ -496,7 +496,7 @@ export default function App() {
   const downloadFromAPI = async () => {
     const filename = `attendance_report_${startDate}_${endDate}.csv`;
     const queryParams = `?start_date=${startDate}&end_date=${endDate}`;
-    const apiUrl = `http://192.168.128.8:8000/attendance-report${queryParams}`;
+    const apiUrl = `http://192.168.0.119:8000/attendance-report${queryParams}`;
 
     try {
       const result = await FileSystem.downloadAsync(
