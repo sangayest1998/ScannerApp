@@ -21,12 +21,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.atbitchmdagunner.dhqscanner",
-      "config": {
-        "cleartext": {
-          "usesCleartextTraffic": true
-        }
-      }
+      "package": "com.atbitchmdagunner.dhqscanner"
     },
     "web": {
       "favicon": "./assets/favicon.png"
