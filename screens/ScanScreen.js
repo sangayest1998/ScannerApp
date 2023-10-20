@@ -181,7 +181,9 @@ const ScanScreen = () => {
     try {
       // const response = await axios.post('http://192.168.128.8:8000/api/qr-scan', 
 
-      const response = await axios.post('http://202.144.153.106:8000/api/qr-scan', 
+      // const response = await axios.post('http://202.144.153.106:8000/api/qr-scan', 
+
+      const response = await axios.post('http://192.168.128.8:8000/api/qr-scan', 
       
       {
         cid: userId,

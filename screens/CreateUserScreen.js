@@ -429,9 +429,9 @@ const CreateUserscreen = () => {
 
   const inputRef = useRef(null);
 
-  // const USER_DATA_BASE_URL = "http://192.168.128.8:8000/user-details";
+  const USER_DATA_BASE_URL = "http://192.168.128.8:8000/user-details";
 
-  const USER_DATA_BASE_URL = "http://202.144.153.106:8000/user-details";
+  // const USER_DATA_BASE_URL = "http://202.144.153.106:8000/user-details";
 
   const createButtonPressed = async () => {
     if (inputValue.trim() !== "") {
