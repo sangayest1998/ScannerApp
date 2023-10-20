@@ -2,7 +2,6 @@
   "cli": {
     "version": ">= 5.4.0",
     "requireCommit": true
-
   },
   "build": {
     "development": {
@@ -13,8 +12,7 @@
       "android": {
         "buildType": "apk"
       }
-    }, 
-    
+    },     
     "preview": {
       "distribution": "internal"
     },

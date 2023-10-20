@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "De-Suung Scanner",
-    "slug": "desuung-app",
+    "name": "scannerApp",
+    "slug": "desuung-hq",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -23,14 +23,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.atbitchmdagunner.dhqscanner"
+      "package": "com.atbitchmdagunner.desuunghq"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "ee1f8c9a-f04e-40ba-988a-be7fb543c8e3"
+        "projectId": "3ad4c2c6-277f-42f1-a643-e3c2214b6eeb"
       }
     },
     "owner": "atbitchmdagunner"
