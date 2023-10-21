@@ -16,14 +16,14 @@ import { Ionicons, MaterialCommunityIcons ,  Zocial, Entypo , FontAwesome,Materi
 // const PROFILE_IMAGE_BASE_URL = 'http://192.168.0.119:8000/update/profile-picture';
 // const PROFILE_PICTURE_BASE_URL = 'http://192.168.0.119:8000/get/profile-picture';
 
-const USER_DATA_BASE_URL = 'http://202.144.153.106:8000/profile';
-const PROFILE_IMAGE_BASE_URL = 'http://202.144.153.106:8000/update/profile-picture';
-const PROFILE_PICTURE_BASE_URL = 'http://202.144.153.106:8000/get/profile-picture';
+// const USER_DATA_BASE_URL = 'http://202.144.153.106:8000/profile';
+// const PROFILE_IMAGE_BASE_URL = 'http://202.144.153.106:8000/update/profile-picture';
+// const PROFILE_PICTURE_BASE_URL = 'http://202.144.153.106:8000/get/profile-picture';
 
 
-// const USER_DATA_BASE_URL = 'http://192.168.128.8:8000/profile';
-// const PROFILE_IMAGE_BASE_URL = 'http://192.168.128.8:8000/update/profile-picture';
-// const PROFILE_PICTURE_BASE_URL = 'http://192.168.128.8:8000/get/profile-picture';
+const USER_DATA_BASE_URL = 'http://192.168.128.8:8000/profile';
+const PROFILE_IMAGE_BASE_URL = 'http://192.168.128.8:8000/update/profile-picture';
+const PROFILE_PICTURE_BASE_URL = 'http://192.168.128.8:8000/get/profile-picture';
 
 const ProfileScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);

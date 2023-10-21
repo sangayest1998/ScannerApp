@@ -26,9 +26,9 @@ export default function EnterOTPScreen() {
 
       const enteredOTP = otp.join('');
 
-      // const response = await fetch(`http://192.168.128.8:8000/enter-otp?cid=${cid}`,
+      const response = await fetch(`http://192.168.128.8:8000/enter-otp?cid=${cid}`,
 
-      const response = await fetch(`http://202.144.153.106:8000/enter-otp?cid=${cid}`,
+      // const response = await fetch(`http://202.144.153.106:8000/enter-otp?cid=${cid}`,
       
       {
         method: 'POST',

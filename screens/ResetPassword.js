@@ -41,9 +41,9 @@ export default function ResetPasswordScreen() {
       try {
         console.log('Sending reset request:', resetData);
 
-        const response = await fetch('http://202.144.153.106:8000/reset-password',
+        // const response = await fetch('http://202.144.153.106:8000/reset-password',
 
-        // const response = await fetch('http://192.168.128.8:8000/reset-password',
+        const response = await fetch('http://192.168.128.8:8000/reset-password',
         
         {
           method: 'POST',
