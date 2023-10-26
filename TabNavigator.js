@@ -52,10 +52,10 @@ const TabNavigator = ({ route }) => {
         headerTitleAlign: 'center',
       }}
     >
-      {userRole === 'admin' || userRole === 'hr' || userRole === 'staff' ? (
+      {userRole === 'ADMIN' || userRole === 'HR' || userRole === 'STAFF' ? (
         <>
           <Tab.Screen name="Scan" component={ScanScreen} options={getTabOptions(route, 'ios-barcode', 'Scan')} />
-          {userRole === 'admin' && (
+          {userRole === 'ADMIN' && (
             <Tab.Screen
               name="CreateUser"
               component={CreateUserScreen}
@@ -65,11 +65,11 @@ const TabNavigator = ({ route }) => {
         </>
       ) : null}
 
-      {userRole === 'admin' || userRole === 'hr' ? (
+      {userRole === 'ADMIN' || userRole === 'HR' ? (
         <Tab.Screen name="Report" component={ReportScreen} options={getTabOptions(route, 'ios-list', 'Report')} />
       ) : null}
 
-      {userRole === 'qrGenerate' ? (
+      {userRole === 'QRGENERATOR' ? (
         <Tab.Screen
           name="QRGenerator"
           component={QRCodeGeneratorScreen}
@@ -77,7 +77,7 @@ const TabNavigator = ({ route }) => {
         />
       ) : null}
 
-      {userRole === 'hr' || userRole === 'staff' ? (
+      {userRole === 'HR' || userRole === 'STAFF' ? (
         <Tab.Screen
           name="Notifications"
           component={NotificationScreen}
@@ -85,7 +85,7 @@ const TabNavigator = ({ route }) => {
         />
       ) : null}
 
-      {userRole === 'admin' || userRole === 'hr' || userRole === 'staff' ? (
+      {userRole === 'ADMIN' || userRole === 'HR' || userRole === 'STAFF' ? (
         <Tab.Screen
           name="Profile"
           component={ProfileScreen}

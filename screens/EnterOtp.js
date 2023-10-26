@@ -16,38 +16,40 @@ export default function EnterOTPScreen() {
   const route = useRoute();
   const cid = route.params.cid;
 
-  const handleOTPEnter = async () => {
-    try {
-      if (otp.some(digit => digit === '')) {
-        // Ensure that all OTP fields are filled
-        Alert.alert('Error', 'Please fill in all the OTP fields.');
-        return;
-      }
 
-      const enteredOTP = otp.join('');
 
-      const response = await fetch(`http://192.168.128.8:8000/enter-otp?cid=${cid}`,
-
-      // const response = await fetch(`http://202.144.153.106:8000/enter-otp?cid=${cid}`,
-      
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ otp_code: enteredOTP }),
-      });
-
-      if (response.ok) {
-        navigation.navigate('reset', { cid: cid });
-      } else {
-        Alert.alert('Error', 'Invalid OTP. Please try again.');
-      }
-    } catch (error) {
-      console.error('An error occurred while sending the request:', error);
-      Alert.alert('Error', 'An error occurred. Please try again later.');
+const handleOTPEnter = async () => {
+  try {
+    if (otp.some(digit => digit === '')) {
+      // Ensure that all OTP fields are filled
+      Alert.alert('Error', 'Please fill in all the OTP fields.');
+      return;
     }
-  };
+
+    const enteredOTP = otp.join('');
+
+    const response = await fetch(`http://192.168.128.8:8000/enter-otp?cid=${cid}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ otp_code: enteredOTP }),
+    });
+
+    console.log('Response status:', response.status);
+    console.log('Response statusText:', response.statusText);
+
+    if (response.ok) {
+      navigation.navigate('reset', { otp: enteredOTP, cid: cid });
+    } else {
+      Alert.alert('Error', 'Invalid OTP. Please try again.');
+    }
+  } catch (error) {
+    console.error('An error occurred while sending the request:', error);
+    Alert.alert('Error', 'An error occurred. Please try again later.');
+  }
+};
+
 
   return (
     <>
@@ -115,11 +117,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   otpInput: {
-    borderWidth: 1,
+    borderWidth: 3,
     borderColor: 'orange',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 50,
+    height: 50,
     textAlign: 'center',
     margin: 5,
   },
@@ -137,3 +138,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+

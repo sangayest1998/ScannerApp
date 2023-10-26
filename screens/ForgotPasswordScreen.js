@@ -45,9 +45,8 @@ const ForgotPasswordScreen = () => {
       setIsLoading(true);
 
       const response = await fetch('http://192.168.128.8:8000/forgot-password', 
-      
-      // const response = await fetch('http://202.144.153.106:8000/forgot-password',
-      
+      // Change the URL to your server's URL
+
       {
         method: "POST",
         headers: {

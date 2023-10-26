@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,8 +8,7 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import DropdownPicker from "react-native-dropdown-picker"; // Import the DropdownPicker component
-
+import { Picker } from "@react-native-picker/picker";
 import {
   Ionicons,
   MaterialCommunityIcons,
@@ -20,98 +19,287 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const getTokenFromStorage = async () => {
+  try {
+    const token = await AsyncStorage.getItem("access_token");
+    return token;
+  } catch (error) {
+    console.error("Error retrieving token from AsyncStorage: ", error);
+  }
+};
 
 const CreateUserscreen = () => {
   const [userData, setUserData] = useState({
     name: "",
-    contact: "",
+    mobile_no: "",
     cid: "",
     did: "",
     email: "",
   });
 
-  const [selectedDepartment, setSelectedDepartment] = useState("Select a Department");
-  const [selectedRole, setSelectedRole] = useState("Select a Role");
-  const [selectedEmployment, setSelectedEmployment] = useState("Select an Employment");
-
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [inputValue, setInputValue] = useState("");
-
-  const departments = ["IT", "NS", "Call Center"];
-  const roles = ["Staff", "Admin", "HR"];
-  const employment = ["Volunteers", "Contract", "Deputation"];
 
   const inputRef = useRef(null);
 
   const USER_DATA_BASE_URL = "http://192.168.128.8:8000/user-details";
 
+  const [selectedDesignation, setSelectedDesignation] = useState("");
+  const [designationList, setDesignationList] = useState([]);
+
+  // Define a function to fetch designations from the backend
+  const fetchDesignations = async () => {
+    try {
+      const token = await getTokenFromStorage(); // Get the token from AsyncStorage
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+
+      const response = await fetch(
+        "http://192.168.128.8:8000/designations_list",
+        {
+          headers,
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setDesignationList(data);
+      } else {
+        console.error("Failed to fetch designations");
+      }
+    } catch (error) {
+      console.error("Error fetching designations:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Call the fetchDesignations function when the component mounts
+    fetchDesignations();
+  }, []);
+
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [departments, setDepartments] = useState([]);
+
+  // Define a function to fetch departments from AsyncStorage
+  const fetchDepartments = async () => {
+    try {
+      const token = await getTokenFromStorage(); // Get the token from AsyncStorage
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+
+      // If departments data is not in AsyncStorage, fetch it from the backend
+      const response = await fetch(
+        "http://192.168.128.8:8000/departments_list",
+        { headers }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setDepartments(data);
+      } else {
+        console.error("Failed to fetch departments");
+      }
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Call the fetchDepartments function when the component mounts
+    fetchDepartments();
+  }, []);
+
+  const [selectedRole, setSelectedRole] = useState("");
+  const [roles, setRoles] = useState([]);
+
+  // Define a function to fetch roles from the backend
+  const fetchRoles = async () => {
+    try {
+      const response = await fetch("http://192.168.128.8:8000/roles_list");
+      if (response.ok) {
+        const data = await response.json();
+        setRoles(data);
+      } else {
+        console.error("Failed to fetch roles");
+      }
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Call the fetchRoles function when the component mounts
+    fetchRoles();
+  }, []);
+
+  const [selectedEmployment, setSelectedEmployment] = useState("");
+  const [employment, setEmployment] = useState([]);
+
+  // Define a function to fetch employment types from the backend
+  const fetchEmploymentTypes = async () => {
+    try {
+      const token = await getTokenFromStorage();
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+      const response = await fetch(
+        "http://192.168.128.8:8000/employment_types_list",
+        { headers }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setEmployment(data);
+      } else {
+        console.error("Failed to fetch employments");
+        // Log the response status and error message
+        console.error("Response Status:", response.status);
+        console.error("Error Message:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Call the fetchRoles function when the component mounts
+    fetchEmploymentTypes();
+  }, []);
+
+  // buttons functions
   const createButtonPressed = async () => {
     if (inputValue.trim() !== "") {
       try {
-        const response = await fetch(`${USER_DATA_BASE_URL}/${inputValue}`);
-  
-        if (response.status === 200) {
-          const data = await response.json();
-          console.log("API Response:", data);
-  
-          if (Array.isArray(data) && data.length > 0) {
-            const userData = data[0];
-            
-            if (userData.name && userData.did && userData.cid && userData.email && userData.mobile_no) {
-              setUserData(userData);
+        const token = await getTokenFromStorage();
+
+        if (token) {
+          const response = await fetch(`${USER_DATA_BASE_URL}/${inputValue}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (response.status === 200) {
+            const responseJson = await response.json();
+            // Access the user data within the "data" array
+            const data = responseJson.data[0];
+
+            if (
+              data &&
+              data.name &&
+              data.did &&
+              data.cid &&
+              data.email &&
+              data.mobile_no
+            ) {
+              setUserData(data);
               setShowUserProfile(true);
             } else {
-              console.error("Invalid or missing data in the API response.");
+              Alert.alert(
+                "Invalid Data",
+                "Data from the API is incomplete or incorrect."
+              );
             }
           } else {
-            console.error("No user data found in the API response.");
+            Alert.alert(
+              "Error",
+              "Failed to fetch user data. Check your CID and server."
+            );
           }
-        } else if (response.status === 404) {
-          console.error("User not found. Check your CID and server.");
         } else {
-          console.error("Failed to fetch user data. Status Code:", response.status);
+          Alert.alert(
+            "Unauthorized",
+            "You are not authorized to access this data."
+          );
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        Alert.alert("Error", "Error fetching user data: " + error.message);
       }
     } else {
       Alert.alert("CID Required", "Please enter a CID to fetch user data.");
     }
   };
 
-  const saveButtonPressed = () => {
+  const saveButtonPressed = async () => {
     if (showUserProfile) {
-      const formData = {
-        name: userData.name,
-        contact: userData.contact,
-        cid: userData.cid,
-        did: userData.did,
-        email: userData.email,
-        department: selectedDepartment,
-        role: selectedRole,
-        employment: selectedEmployment,
-      };
+      try {
+        const token = await getTokenFromStorage();
 
-      fetch(USER_DATA_BASE_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            console.log("Data saved successfully.");
+        if (token) {
+          const postData = {
+            name: userData.name,
+            did: userData.did,
+            email: userData.email,
+            contact: userData.mobile_no,
+            cid: userData.cid,
+            password: "string",
+            designation: selectedDesignation,
+            department: selectedDepartment,
+            roles: selectedRole,
+            employment_type: selectedEmployment,
+          };
+
+          console.log("postData:", postData);
+
+          const response = await fetch("http://192.168.128.8:8000/user/", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(postData),
+          });
+
+          console.log("Response:", response);
+
+          if (response.status === 201) {
+            console.log("User Created:", response.status);
+            Alert.alert(
+              "User Created",
+              "The user has been successfully created."
+            );
+            setShowUserProfile(false);
           } else {
-            console.error("Failed to save data.");
+            console.error(
+              "Error creating user. Response Status:",
+              response.status
+            );
+
           }
-        })
-        .catch((error) => {
-          console.error("Error while saving data:", error);
-        });
+        } else {
+          console.error("Unauthorized: No Token");
+          Alert.alert(
+            "Unauthorized",
+            "You are not authorized to create a user."
+          );
+        }
+      } catch (error) {
+        console.error("Error creating user:", error);
+        Alert.alert("Error", "Error creating user: " + error.message);
+      }
+    } else {
+      setShowUserProfile(false);
     }
-    setShowUserProfile(false);
   };
+
+  const pickerStyle = {
+    height: 50, // You can adjust the height as needed
+    width: "100%", // Set the width to your desired value// Background color
+    paddingHorizontal: 10, // Padding left and right
+    marginBottom: 10, // Margin bottom to create spacing between pickers
+  };
+
+  // Assuming userData.mobile_no is a string
+  let mobileNoWithoutPrefix = userData.mobile_no;
+
+  if (mobileNoWithoutPrefix.startsWith("+975")) {
+    mobileNoWithoutPrefix = mobileNoWithoutPrefix.substring(4);
+  }
 
   return (
     <KeyboardAwareScrollView
@@ -123,7 +311,7 @@ const CreateUserscreen = () => {
           <View style={styles.coolinput}>
             <TextInput
               style={styles.input}
-              placeholder="Enter your CiD Number........"
+              placeholder="Enter your CID Number........"
               name="input"
               keyboardType="numeric"
               value={inputValue}
@@ -206,7 +394,7 @@ const CreateUserscreen = () => {
             <Text style={styles.staticLabel}>Contact:</Text>
             <TextInput
               style={styles.userInfoInput}
-              value={userData.contact}
+              value={mobileNoWithoutPrefix}
               editable={false}
               underlineColorAndroid="transparent"
             />
@@ -219,12 +407,24 @@ const CreateUserscreen = () => {
               style={styles.icon}
             />
             <Text style={styles.staticLabel}>Designation:</Text>
-            <TextInput
-              style={styles.userInfoInput}
-              placeholder="Enter Designation..."
-              editable={true}
-              underlineColorAndroid="transparent"
-            />
+            {Array.isArray(designationList) ? (
+              <Picker
+                style={pickerStyle}
+                selectedValue={selectedDesignation}
+                onValueChange={(itemValue) => setSelectedDesignation(itemValue)}
+              >
+                <Picker.Item label="Select a Designation" value="" />
+                {designationList.map((designation) => (
+                  <Picker.Item
+                    label={designation.name}
+                    value={designation.name}
+                    key={designation.name}
+                  />
+                ))}
+              </Picker>
+            ) : (
+              <Text>Loading Designations...</Text>
+            )}
           </View>
           <View style={styles.userInfoRow}>
             <FontAwesome
@@ -234,22 +434,20 @@ const CreateUserscreen = () => {
               style={styles.icon}
             />
             <Text style={styles.staticLabel}>Department:</Text>
-            <DropdownPicker
-              items={["Select a Department", ...departments].map((department) => ({
-                label: department,
-                value: department,
-              }))}
-              value={selectedDepartment}
-              placeholder="Select a Department"
-              containerStyle={styles.userInfoInput}
-              onOpen={() => {
-                // Handle open event
-              }}
-              onClose={() => {
-                // Handle close event
-              }}
-              onChangeItem={(item) => setSelectedDepartment(item.value)}
-            />
+            <Picker
+              style={pickerStyle}
+              selectedValue={selectedDepartment}
+              onValueChange={(itemValue) => setSelectedDepartment(itemValue)}
+            >
+              <Picker.Item label="Select a Department" value="" />
+              {departments.map((department, index) => (
+                <Picker.Item
+                  label={department}
+                  value={department}
+                  key={index}
+                />
+              ))}
+            </Picker>
           </View>
           <View style={styles.userInfoRow}>
             <FontAwesome5
@@ -259,22 +457,16 @@ const CreateUserscreen = () => {
               style={styles.icon}
             />
             <Text style={styles.staticLabel}>Role:</Text>
-            <DropdownPicker
-              items={["Select a Role", ...roles].map((role) => ({
-                label: role,
-                value: role,
-              }))}
-              value={selectedRole}
-              placeholder="Select a Role"
-              containerStyle={styles.userInfoInput}
-              onOpen={() => {
-                // Handle open event
-              }}
-              onClose={() => {
-                // Handle close event
-              }}
-              onChangeItem={(item) => setSelectedRole(item.value)}
-            />
+            <Picker
+              style={pickerStyle}
+              selectedValue={selectedRole}
+              onValueChange={(itemValue) => setSelectedRole(itemValue)}
+            >
+              <Picker.Item label="Select a Role" value="" />
+              {roles.map((role, index) => (
+                <Picker.Item label={role} value={role} key={index} />
+              ))}
+            </Picker>
           </View>
           <View style={styles.userInfoRow}>
             <FontAwesome
@@ -284,22 +476,20 @@ const CreateUserscreen = () => {
               style={styles.icon}
             />
             <Text style={styles.staticLabel}>Employment Type:</Text>
-            <DropdownPicker
-              items={["Select an Employment", ...employment].map((employmentType) => ({
-                label: employmentType,
-                value: employmentType,
-              }))}
-              value={selectedEmployment}
-              placeholder="Select an Employment"
-              containerStyle={styles.userInfoInput}
-              onOpen={() => {
-                // Handle open event
-              }}
-              onClose={() => {
-                // Handle close event
-              }}
-              onChangeItem={(item) => setSelectedEmployment(item.value)}
-            />
+            <Picker
+              style={pickerStyle}
+              selectedValue={selectedEmployment}
+              onValueChange={(itemValue) => setSelectedEmployment(itemValue)}
+            >
+              <Picker.Item label="Select an Employment Type" value="" />
+              {employment.map((employmentType, index) => (
+                <Picker.Item
+                  label={employmentType.name}
+                  value={employmentType.name}
+                  key={index}
+                />
+              ))}
+            </Picker>
           </View>
           <TouchableOpacity
             style={styles.saveButton}
