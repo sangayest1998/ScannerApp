@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Platform,
   Alert,
+  ActivityIndicator,
+  Keyboard,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import {
@@ -17,9 +19,11 @@ import {
   FontAwesome,
   FontAwesome5,
   MaterialIcons,
+  AntDesign,
 } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const getTokenFromStorage = async () => {
   try {
@@ -41,6 +45,7 @@ const CreateUserscreen = () => {
 
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const inputRef = useRef(null);
 
@@ -172,134 +177,165 @@ const CreateUserscreen = () => {
 
   // buttons functions
   const createButtonPressed = async () => {
-    if (inputValue.trim() !== "") {
-      try {
-        const token = await getTokenFromStorage();
+    Keyboard.dismiss();
+    if (inputValue.trim() === "") {
+      Alert.alert("CID Required", "Please enter a CID to fetch user data.");
+      return;
+    }
 
-        if (token) {
-          const response = await fetch(`${USER_DATA_BASE_URL}/${inputValue}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          });
+    if (inputValue === userData.cid) {
+      Alert.alert(
+        "User Already Created",
+        "You are trying to search the same CID again."
+      );
+      return;
+    }
 
-          if (response.status === 200) {
-            const responseJson = await response.json();
-            // Access the user data within the "data" array
-            const data = responseJson.data[0];
+    try {
+      const token = await getTokenFromStorage();
+      if (token) {
+        setLoading(true);
 
-            if (
-              data &&
-              data.name &&
-              data.did &&
-              data.cid &&
-              data.email &&
-              data.mobile_no
-            ) {
-              setUserData(data);
-              setShowUserProfile(true);
-            } else {
-              Alert.alert(
-                "Invalid Data",
-                "Data from the API is incomplete or incorrect."
-              );
-            }
+        const response = await fetch(`${USER_DATA_BASE_URL}/${inputValue}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (response.status === 200) {
+          const responseJson = await response.json();
+          const data = responseJson.data[0];
+
+          if (
+            data &&
+            data.name &&
+            data.did &&
+            data.cid &&
+            data.email &&
+            data.mobile_no
+          ) {
+            setUserData(data);
+            setShowUserProfile(true);
+            setInputValue("");
           } else {
-            Alert.alert(
-              "Error",
-              "Failed to fetch user data. Check your CID and server."
-            );
+            Alert.alert("Invalid Data", "Incorrect CiD Number.");
           }
         } else {
           Alert.alert(
-            "Unauthorized",
-            "You are not authorized to access this data."
+            "Error",
+            "Failed to fetch user data. Check your CID and server."
           );
         }
-      } catch (error) {
-        Alert.alert("Error", "Error fetching user data: " + error.message);
+      } else {
+        Alert.alert(
+          "Unauthorized",
+          "You are not authorized to access this data."
+        );
       }
-    } else {
-      Alert.alert("CID Required", "Please enter a CID to fetch user data.");
+    } catch (error) {
+      Alert.alert("Error", "Error fetching user data: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
+
+  //post
+
   const saveButtonPressed = async () => {
     if (showUserProfile) {
-      try {
-        const token = await getTokenFromStorage();
+      const missingSelections = [];
 
-        if (token) {
-          const postData = {
-            name: userData.name,
-            did: userData.did,
-            email: userData.email,
-            contact: userData.mobile_no,
-            cid: userData.cid,
-            password: "string",
-            designation: selectedDesignation,
-            department: selectedDepartment,
-            roles: selectedRole,
-            employment_type: selectedEmployment,
-          };
+    if (selectedDesignation === "") {
+      missingSelections.push("designation");
+    }
 
-          console.log("postData:", postData);
+    if (selectedDepartment === "") {
+      missingSelections.push("department");
+    }
 
-          const response = await fetch("http://192.168.128.8:8000/user/", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(postData),
-          });
+    if (selectedRole === "") {
+      missingSelections.push("roles");
+    }
 
-          console.log("Response:", response);
+    if (selectedEmployment === "") {
+      missingSelections.push("employment types");
+    }
 
-          if (response.status === 201) {
-            console.log("User Created:", response.status);
-            Alert.alert(
-              "User Created",
-              "The user has been successfully created."
-            );
-            setShowUserProfile(false);
-          } else {
-            console.error(
-              "Error creating user. Response Status:",
-              response.status
-            );
+    if (missingSelections.length > 0) {
+      Alert.alert(
+        "Selection Required",
+        `Please select ${missingSelections.join(", ")} before creating the user.`
+      );
+      return;
+    }
 
-          }
+      const token = await getTokenFromStorage();
+
+      if (token) {
+        const postData = {
+          name: userData.name,
+          did: userData.did,
+          email: userData.email,
+          contact: userData.mobile_no,
+          cid: userData.cid,
+          password: "string",
+          designation: selectedDesignation,
+          department: selectedDepartment,
+          roles: selectedRole,
+          employment_type: selectedEmployment,
+        };
+
+        console.log("postData:", postData);
+
+        const response = await fetch("http://192.168.128.8:8000/user/", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postData),
+        });
+        if (response.status === 200) {
+          // User data posted successfully
+          Alert.alert("Message Alert.","User Created Successfully");
+          console.log("User Created Successfully");
         } else {
-          console.error("Unauthorized: No Token");
-          Alert.alert(
-            "Unauthorized",
-            "You are not authorized to create a user."
-          );
+          Alert.alert("Message Alert.","The user already exists.");
+          console.log("Failed");
         }
-      } catch (error) {
-        console.error("Error creating user:", error);
-        Alert.alert("Error", "Error creating user: " + error.message);
+          // Clear user data and selected values for a new entry
+          setUserData({
+            name: "",
+            mobile_no: "",
+            cid: "",
+            did: "",
+            email: "",
+          });
+          setSelectedDesignation("");
+          setSelectedDepartment("");
+          setSelectedRole("");
+          setSelectedEmployment("");
+
+          // Hide the user profile
+          setShowUserProfile(false);
+        
       }
-    } else {
-      setShowUserProfile(false);
     }
   };
 
   const pickerStyle = {
-    height: 50, // You can adjust the height as needed
-    width: "100%", // Set the width to your desired value// Background color
-    paddingHorizontal: 10, // Padding left and right
-    marginBottom: 10, // Margin bottom to create spacing between pickers
+    height: 50,
+    width: "90%",
+    paddingHorizontal: 10,
+    marginBottom: 10,
   };
 
-  // Assuming userData.mobile_no is a string
-  let mobileNoWithoutPrefix = userData.mobile_no;
-
-  if (mobileNoWithoutPrefix.startsWith("+975")) {
-    mobileNoWithoutPrefix = mobileNoWithoutPrefix.substring(4);
-  }
+  const itemStyle = {
+    // Style for individual items, including the arrow color
+    color: "grey", // This will change the arrow color
+  };
 
   return (
     <KeyboardAwareScrollView
@@ -319,12 +355,18 @@ const CreateUserscreen = () => {
               ref={inputRef}
             />
           </View>
-          <TouchableOpacity
-            style={styles.buttonContent}
-            onPress={createButtonPressed}
-          >
-            <Text style={styles.buttonText}>Search</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonContent}>
+            {loading ? ( // Show loading indicator when loading is true
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <TouchableOpacity
+                onPress={createButtonPressed}
+                style={styles.buttonTouchable}
+              >
+                <Text style={styles.buttonText}>Search</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </View>
       {showUserProfile && (
@@ -394,7 +436,7 @@ const CreateUserscreen = () => {
             <Text style={styles.staticLabel}>Contact:</Text>
             <TextInput
               style={styles.userInfoInput}
-              value={mobileNoWithoutPrefix}
+              value={userData.mobile_no}
               editable={false}
               underlineColorAndroid="transparent"
             />
@@ -406,7 +448,7 @@ const CreateUserscreen = () => {
               color="orange"
               style={styles.icon}
             />
-            <Text style={styles.staticLabel}>Designation:</Text>
+
             {Array.isArray(designationList) ? (
               <Picker
                 style={pickerStyle}
@@ -419,6 +461,7 @@ const CreateUserscreen = () => {
                     label={designation.name}
                     value={designation.name}
                     key={designation.name}
+                    style={itemStyle}
                   />
                 ))}
               </Picker>
@@ -433,7 +476,7 @@ const CreateUserscreen = () => {
               color="orange"
               style={styles.icon}
             />
-            <Text style={styles.staticLabel}>Department:</Text>
+
             <Picker
               style={pickerStyle}
               selectedValue={selectedDepartment}
@@ -445,6 +488,7 @@ const CreateUserscreen = () => {
                   label={department}
                   value={department}
                   key={index}
+                  style={itemStyle}
                 />
               ))}
             </Picker>
@@ -456,7 +500,7 @@ const CreateUserscreen = () => {
               color="orange"
               style={styles.icon}
             />
-            <Text style={styles.staticLabel}>Role:</Text>
+
             <Picker
               style={pickerStyle}
               selectedValue={selectedRole}
@@ -464,7 +508,12 @@ const CreateUserscreen = () => {
             >
               <Picker.Item label="Select a Role" value="" />
               {roles.map((role, index) => (
-                <Picker.Item label={role} value={role} key={index} />
+                <Picker.Item
+                  label={role}
+                  value={role}
+                  key={index}
+                  style={itemStyle}
+                />
               ))}
             </Picker>
           </View>
@@ -475,7 +524,7 @@ const CreateUserscreen = () => {
               color="orange"
               style={styles.icon}
             />
-            <Text style={styles.staticLabel}>Employment Type:</Text>
+
             <Picker
               style={pickerStyle}
               selectedValue={selectedEmployment}
@@ -487,6 +536,7 @@ const CreateUserscreen = () => {
                   label={employmentType.name}
                   value={employmentType.name}
                   key={index}
+                  style={itemStyle}
                 />
               ))}
             </Picker>
@@ -554,8 +604,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
-    width: "100%",
-    marginLeft: 60,
+    width: "80%",
+    marginLeft: 50,
   },
   userInfoInput: {
     flex: 1,
