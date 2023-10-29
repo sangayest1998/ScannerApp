@@ -49,7 +49,7 @@ export default function App() {
     const queryParams = `?start_date=${startDate}&end_date=${endDate}`;
 
 
-    const apiUrl = `http://192.168.128.8:8000/attendance-report${queryParams}`;
+    const apiUrl = `https://dhqscanner.desuung.org.bt:8443/attendance-report${queryParams}`;
 
     // const apiUrl = `http://202.144.153.106:8000/attendance-report${queryParams}`;
 

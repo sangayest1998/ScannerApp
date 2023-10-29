@@ -4,7 +4,7 @@ import React from 'react'
 const AllPage = () => {
   return (
     <View>
-      <Text>AllPage</Text>
+      <Text>Comming Soon</Text>
     </View>
   )
 }

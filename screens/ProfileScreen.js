@@ -10,20 +10,19 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons, MaterialCommunityIcons ,  Zocial, Entypo , FontAwesome,MaterialIcons } from '@expo/vector-icons';
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  Zocial,
+  Entypo,
+  FontAwesome,
+  FontAwesome5,
+  MaterialIcons,
+} from "@expo/vector-icons";
 
-// const USER_DATA_BASE_URL = 'http://192.168.0.119:8000/profile'; 
-// const PROFILE_IMAGE_BASE_URL = 'http://192.168.0.119:8000/update/profile-picture';
-// const PROFILE_PICTURE_BASE_URL = 'http://192.168.0.119:8000/get/profile-picture';
-
-// const USER_DATA_BASE_URL = 'http://202.144.153.106:8000/profile';
-// const PROFILE_IMAGE_BASE_URL = 'http://202.144.153.106:8000/update/profile-picture';
-// const PROFILE_PICTURE_BASE_URL = 'http://202.144.153.106:8000/get/profile-picture';
-
-
-const USER_DATA_BASE_URL = 'http://192.168.128.8:8000/profile';
-const PROFILE_IMAGE_BASE_URL = 'http://192.168.128.8:8000/update/profile-picture';
-const PROFILE_PICTURE_BASE_URL = 'http://192.168.128.8:8000/get/profile-picture';
+const USER_DATA_BASE_URL = 'https://dhqscanner.desuung.org.bt:8443/profile';
+const PROFILE_IMAGE_BASE_URL = 'https://dhqscanner.desuung.org.bt:8443/update/profile-picture';
+const PROFILE_PICTURE_BASE_URL = 'https://dhqscanner.desuung.org.bt:8443/get/profile-picture';
 
 const ProfileScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
@@ -56,6 +55,7 @@ const ProfileScreen = ({ navigation }) => {
   const fetchUserData = async () => {
     try {
       const access_token = await AsyncStorage.getItem('access_token');
+      const profileImageUrl = await AsyncStorage.getItem('profile_picture_url'); // Get the stored URL
 
       const response = await fetch(USER_DATA_BASE_URL, {
         method: 'GET',
@@ -66,7 +66,6 @@ const ProfileScreen = ({ navigation }) => {
 
       if (response.ok) {
         const data = await response.json();
-        const profileImageUrl = await AsyncStorage.getItem('profile_picture_url');
 
         if (profileImageUrl) {
           setImage(profileImageUrl);
@@ -151,8 +150,6 @@ const ProfileScreen = ({ navigation }) => {
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem('access_token');
-      await AsyncStorage.removeItem('profile_picture_url');
       navigation.navigate('Login');
     } catch (error) {
       console.error('Error logging out:', error);
@@ -187,67 +184,68 @@ const ProfileScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.userInfoContainer}>
-      <View style={styles.userInfoRow}>
-  <Ionicons name="ios-person-circle" size={24} color="orange"  style={styles.icon}/>
-  <Text style={styles.staticLabel}>Name:</Text>
-  <TextInput
-    style={styles.userInfoInput}
-    value={userData.name}
-    editable={false}
-    underlineColorAndroid="transparent"
-  />
-</View>
-<View style={styles.userInfoRow}>
-  <MaterialCommunityIcons name="clipboard-account" size={24} color="orange" style={styles.icon} />
-  <Text style={styles.staticLabel}>DID:</Text>
-  <TextInput
-    style={styles.userInfoInput}
-    value={userData.did}
-    editable={false}
-    underlineColorAndroid="transparent"
-  />
-</View>
-<View style={styles.userInfoRow}>
-  <Entypo name="v-card" size={24} color="orange" style={styles.icon} />
-  <Text style={styles.staticLabel}>CID:</Text>
-  <TextInput
-    style={styles.userInfoInput}
-    value={userData.cid.toString()}
-    editable={false}
-    underlineColorAndroid="transparent"
-  />
-</View>
-<View style={styles.userInfoRow}>
-  <Zocial name="email" size={24} color="orange" style={styles.icon} />
-  <Text style={styles.staticLabel}>Email:</Text>
-  <TextInput
-    style={styles.userInfoInput}
-    value={userData.email}
-    editable={false}
-    underlineColorAndroid="transparent"
-  />
-</View>
-<View style={styles.userInfoRow}>
-  <MaterialIcons name="sim-card" size={24} color="orange" style={styles.icon} />
-  <Text style={styles.staticLabel}>Contact:</Text>
-  <TextInput
-    style={styles.userInfoInput}
-    value={userData.contact.toString()}
-    editable={false}
-    underlineColorAndroid="transparent"
-  />
-</View>
-<View style={styles.userInfoRow}>
-  <FontAwesome name="group" size={24} color="orange" style={styles.icon}/>
-  <Text style={styles.staticLabel}>Department:</Text>
-  <TextInput
-    style={styles.userInfoInput}
-    value={userData.department}
-    editable={false}
-    underlineColorAndroid="transparent"
-  />
-</View>
+        <View style={styles.userInfoRow}>
+          <Ionicons name="ios-person-circle" size={24} color="orange" style={styles.icon} />
+          <Text style={styles.staticLabel}>Name:</Text>
+          <TextInput
+            style={styles.userInfoInput}
+            value={userData.name}
+            editable={false}
+            underlineColorAndroid="transparent"
+          />
         </View>
+        <View style={styles.userInfoRow}>
+          <MaterialCommunityIcons name="clipboard-account" size={24} color="orange" style={styles.icon} />
+          <Text style={styles.staticLabel}>DID:</Text>
+          <TextInput
+            style={styles.userInfoInput}
+            value={userData.did}
+            editable={false}
+            underlineColorAndroid="transparent"
+          />
+        </View>
+        <View style={styles.userInfoRow}>
+          <Entypo name="v-card" size={24} color="orange" style={styles.icon} />
+          <Text style={styles.staticLabel}>CID:</Text>
+          <TextInput
+            style={styles.userInfoInput}
+            value={userData.cid.toString()}
+            editable={false}
+            underlineColorAndroid="transparent"
+          />
+        </View>
+        <View style={styles.userInfoRow}>
+          <Zocial name="email" size={24} color="orange" style={styles.icon} />
+          <Text style={styles.staticLabel}>Email:</Text>
+          <TextInput
+            style={styles.userInfoInput}
+            value={userData.email}
+            editable={false}
+            underlineColorAndroid="transparent"
+          />
+        </View>
+        <View style={styles.userInfoRow}>
+          <MaterialIcons name="sim-card" size={24} color="orange" style={styles.icon} />
+          <Text style={styles.staticLabel}>Contact:</Text>
+          <TextInput
+            style={styles.userInfoInput}
+            value={userData.contact.toString()}
+            editable={false}
+            underlineColorAndroid="transparent"
+          />
+        </View>
+        <View style={styles.userInfoRow}>
+          <FontAwesome name="group" size={24} color="orange" style={styles.icon} />
+          <Text style={styles.staticLabel}>Department:</Text>
+          <TextInput
+            style={styles.userInfoInput}
+            value={userData.department}
+            editable={false}
+            underlineColorAndroid="transparent"
+          />
+        </View>
+      </View>
+
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.buttonText}>Log Out</Text>
       </TouchableOpacity>
@@ -288,30 +286,6 @@ const styles = StyleSheet.create({
   userInfoContainer: {
     marginTop: 20,
   },
-  userInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    width: '100%',
-    marginLeft: 0, 
-  },
-  userInfoInput: {
-    flex: 1,
-    height: 40,
-    borderRadius: 10,
-    borderWidth: 0,
-    borderColor: 'transparent',
-    color: 'grey',
-    paddingLeft:6
-  },
-  staticLabel: {
-    fontWeight: 'bold',
-   
-  },
-  icon: {
-    marginRight: 18, 
-    paddingLeft:60
-  },
   errorMessage: {
     color: 'red',
     fontSize: 16,
@@ -321,12 +295,35 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     padding: 10,
     width: '90%',
-    marginTop:40
+    marginTop: 40,
   },
   buttonText: {
     color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
+  },
+  userInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    width: '100%',
+    marginLeft: 0,
+  },
+  userInfoInput: {
+    flex: 1,
+    height: 40,
+    borderRadius: 10,
+    borderWidth: 0,
+    borderColor: 'transparent',
+    color: 'grey',
+    paddingLeft: 6,
+  },
+  staticLabel: {
+    fontWeight: 'bold',
+  },
+  icon: {
+    marginRight: 18,
+    paddingLeft: 60,
   },
 });
 

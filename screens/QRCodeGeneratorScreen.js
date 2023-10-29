@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 
-const BASE_URL = "http://192.168.128.8:8000:8000";
+const BASE_URL = "https://dhqscanner.desuung.org.bt:8443/";
 
 // const BASE_URL = "http://192.168.0.119:8000";
 

@@ -44,7 +44,7 @@ const ForgotPasswordScreen = () => {
     try {
       setIsLoading(true);
 
-      const response = await fetch('http://192.168.128.8:8000/forgot-password', 
+      const response = await fetch('https://dhqscanner.desuung.org.bt:8443/forgot-password', 
       // Change the URL to your server's URL
 
       {

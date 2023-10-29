@@ -19,11 +19,10 @@ import {
   FontAwesome,
   FontAwesome5,
   MaterialIcons,
-  AntDesign,
 } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import DropDownPicker from "react-native-dropdown-picker";
+
 
 const getTokenFromStorage = async () => {
   try {
@@ -289,7 +288,7 @@ const CreateUserscreen = () => {
 
         console.log("postData:", postData);
 
-        const response = await fetch("http://192.168.128.8:8000/user/", {
+        const response = await fetch("https://dhqscanner.desuung.org.bt:8443/user/", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -347,8 +346,9 @@ const CreateUserscreen = () => {
           <View style={styles.coolinput}>
             <TextInput
               style={styles.input}
-              placeholder="Enter your CID Number........"
+              placeholder="Enter the CID"
               name="input"
+             
               keyboardType="numeric"
               value={inputValue}
               onChangeText={(text) => setInputValue(text)}
@@ -363,7 +363,7 @@ const CreateUserscreen = () => {
                 onPress={createButtonPressed}
                 style={styles.buttonTouchable}
               >
-                <Text style={styles.buttonText}>Search</Text>
+               <MaterialIcons name="search" size={27} color="#fff" />
               </TouchableOpacity>
             )}
           </View>
@@ -558,6 +558,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     marginTop: 20,
+    justifyContent:'center',
   },
   inputContainer: {
     flexDirection: "row",
