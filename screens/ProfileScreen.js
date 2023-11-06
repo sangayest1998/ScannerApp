@@ -10,19 +10,11 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  Ionicons,
-  MaterialCommunityIcons,
-  Zocial,
-  Entypo,
-  FontAwesome,
-  FontAwesome5,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, Zocial, Entypo, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 
-const USER_DATA_BASE_URL = 'https://dhqscanner.desuung.org.bt:8443/profile';
-const PROFILE_IMAGE_BASE_URL = 'https://dhqscanner.desuung.org.bt:8443/update/profile-picture';
-const PROFILE_PICTURE_BASE_URL = 'https://dhqscanner.desuung.org.bt:8443/get/profile-picture';
+const USER_DATA_BASE_URL = 'http://192.168.128.8:8000/profile';
+const PROFILE_IMAGE_BASE_URL = 'http://192.168.128.8:8000/update/profile-picture';
+const PROFILE_PICTURE_BASE_URL = 'http://192.168.128.8:8000/get/profile-picture';
 
 const ProfileScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
@@ -39,6 +31,7 @@ const ProfileScreen = ({ navigation }) => {
 
   useEffect(() => {
     getPermission();
+    retrieveProfilePicture(); // Retrieve profile picture URL from AsyncStorage
     fetchUserData();
   }, []);
 
@@ -52,10 +45,20 @@ const ProfileScreen = ({ navigation }) => {
     }
   };
 
+  const retrieveProfilePicture = async () => {
+    try {
+      const profileImageUrl = await AsyncStorage.getItem('profile_picture_url');
+      if (profileImageUrl) {
+        setImage(profileImageUrl);
+      }
+    } catch (error) {
+      console.error('Error retrieving profile picture URL:', error);
+    }
+  };
+
   const fetchUserData = async () => {
     try {
       const access_token = await AsyncStorage.getItem('access_token');
-      const profileImageUrl = await AsyncStorage.getItem('profile_picture_url'); // Get the stored URL
 
       const response = await fetch(USER_DATA_BASE_URL, {
         method: 'GET',
@@ -66,11 +69,6 @@ const ProfileScreen = ({ navigation }) => {
 
       if (response.ok) {
         const data = await response.json();
-
-        if (profileImageUrl) {
-          setImage(profileImageUrl);
-        }
-
         setUserData(data);
       } else {
         const responseText = await response.text();
@@ -98,7 +96,7 @@ const ProfileScreen = ({ navigation }) => {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3],
+        aspect: [1, 1],
         quality: 1,
       });
 
@@ -150,6 +148,7 @@ const ProfileScreen = ({ navigation }) => {
 
   const handleLogout = async () => {
     try {
+      await AsyncStorage.removeItem('access_token');
       navigation.navigate('Login');
     } catch (error) {
       console.error('Error logging out:', error);
@@ -245,7 +244,6 @@ const ProfileScreen = ({ navigation }) => {
           />
         </View>
       </View>
-
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.buttonText}>Log Out</Text>
       </TouchableOpacity>
@@ -286,22 +284,6 @@ const styles = StyleSheet.create({
   userInfoContainer: {
     marginTop: 20,
   },
-  errorMessage: {
-    color: 'red',
-    fontSize: 16,
-  },
-  logoutButton: {
-    backgroundColor: 'orange',
-    borderRadius: 100,
-    padding: 10,
-    width: '90%',
-    marginTop: 40,
-  },
-  buttonText: {
-    color: 'white',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
   userInfoRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -324,6 +306,22 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 18,
     paddingLeft: 60,
+  },
+  errorMessage: {
+    color: 'red',
+    fontSize: 16,
+  },
+  logoutButton: {
+    backgroundColor: 'orange',
+    borderRadius: 100,
+    padding: 10,
+    width: '90%',
+    marginTop: 40,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });
 

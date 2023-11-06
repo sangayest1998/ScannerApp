@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   StatusBar,
   Keyboard,
+  Alert
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -43,21 +44,20 @@ const ForgotPasswordScreen = () => {
   const handleCIDSubmit = async () => {
     try {
       setIsLoading(true);
-
-      const response = await fetch('https://dhqscanner.desuung.org.bt:8443/forgot-password', 
-      // Change the URL to your server's URL
-
-      {
+  
+      const response = await fetch('http://192.168.128.8:8000/forgot-password', {
+       // const response = await fetch('http://202.144.153.106:8000/forgot-password', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ cid: parseInt(cid) }),
       });
-
+  
       if (response.ok) {
-        setSuccessMessage("Password reset email sent successfully.");
-        navigation.navigate("otp", { cid: cid });
+        Alert.alert("Success", "Password reset email sent successfully.", [
+          { text: "OK", onPress: () => navigation.navigate("otp", { cid: cid }) }
+        ]);
       } else {
         setErrorMessage("Failed to send CID for password reset.");
         console.error(

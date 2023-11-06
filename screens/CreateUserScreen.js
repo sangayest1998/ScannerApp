@@ -288,7 +288,7 @@ const CreateUserscreen = () => {
 
         console.log("postData:", postData);
 
-        const response = await fetch("https://dhqscanner.desuung.org.bt:8443/user/", {
+        const response = await fetch("http://192.168.128.8:8000/user/", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -453,7 +453,9 @@ const CreateUserscreen = () => {
               <Picker
                 style={pickerStyle}
                 selectedValue={selectedDesignation}
-                onValueChange={(itemValue) => setSelectedDesignation(itemValue)}
+                onValueChange={(itemValue) => setSelectedDesignation(itemValue)
+                }
+                
               >
                 <Picker.Item label="Select a Designation" value="" />
                 {designationList.map((designation) => (

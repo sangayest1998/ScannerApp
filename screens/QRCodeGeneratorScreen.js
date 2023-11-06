@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
-const BASE_URL = "https://dhqscanner.desuung.org.bt:8443/";
+const getTokenFromStorage = async () => {
+  try {
+    const token = await AsyncStorage.getItem("access_token");
+    return token;
+  } catch (error) {
+    console.error("Error retrieving token from AsyncStorage: ", error);
+  }
+};
 
-// const BASE_URL = "http://192.168.0.119:8000";
-
-// const BASE_URL = "http://202.144.153.106:8000";
-
+const BASE_URL = "http://192.168.128.8:8000";
+//const BASE_URL = "http://202.144.153.106:8000";
 
 const QRCodeGenerator = () => {
   const [checkInQR, setCheckInQR] = useState(null);
@@ -17,26 +24,48 @@ const QRCodeGenerator = () => {
 
   const generateQR = async (action) => {
     try {
-      const response = await fetch(`${BASE_URL}/api/qr-codes/${action}`);
-      if (response.ok) {
-        const data = await response.json();
-        if (action === "check-in") {
-          setCheckInQR(data.check_in_qr_url);
-          setCheckOutQR(null);
-          setShowCheckInButton(false);
-          setLabelText("Check-In Code"); // Change label text to "Check-In"
-        } else if (action === "check-out") {
-          setCheckOutQR(data.check_out_qr_url);
-          setCheckInQR(null);
-          setShowCheckInButton(true);
-          setLabelText("Check-Out Code"); // Change label text to "Check-Out"
+      const token = await getTokenFromStorage();
+      if (token) {
+        console.log(`Fetching ${action} QR code...`);
+        
+        try {
+          const response = await axios.get(`${BASE_URL}/api/qr-codes/${action}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          
+          console.log("Response data:", response.data);
+          
+          if (response.status === 200) {
+            console.log(`${action} QR code fetched successfully.`);
+            if (action === "check-in") {
+              setCheckInQR(response.data.check_in_qr_url);
+              setCheckOutQR(null);
+              setShowCheckInButton(false);
+              setLabelText("Check-In Code");
+            } else if (action === "check-out") {
+              setCheckOutQR(response.data.check_out_qr_url);
+              setCheckInQR(null);
+              setShowCheckInButton(true);
+              setLabelText("Check-Out Code");
+            }
+            setError(null);
+          } else {
+            console.log(`Error fetching ${action} QR code`);
+            setError(`Error fetching ${action} QR code`);
+          }
+        } catch (error) {
+          console.error(`Error fetching ${action} QR code: ${error.message}`);
+          setError(`Error fetching ${action} QR code: ${error.message}`);
         }
-        setError(null);
       } else {
-        setError(`Error fetching ${action} QR code`);
+        console.error("Token is not available.");
+        setError("Token is not available.");
       }
     } catch (error) {
-      setError(`Error fetching ${action} QR code: ${error.message}`);
+      console.error(`Error retrieving token: ${error}`);
+      setError("Error retrieving token.");
     }
   };
 
@@ -69,9 +98,7 @@ const QRCodeGenerator = () => {
         </View>
       )}
 
-      {error && (
-        <Text style={styles.errorText}>{error}</Text>
-      )}
+      {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 };
@@ -83,7 +110,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "orange",
     padding: 10,
     borderRadius: 5,
     position: "absolute",
@@ -92,16 +119,19 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 20,
+    fontWeight: 'bold',
   },
   topRightButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: "orange",
     padding: 10,
     borderRadius: 5,
     position: "absolute",
-    top: 20,
-    right: 20,
+    top: 100,
+    right: 100,
+    transform: [{ translateX: 50 }, { translateY: -50 }],
   },
+  
   qrContainer: {
     alignItems: "center",
     marginTop: 20,
@@ -114,13 +144,12 @@ const styles = StyleSheet.create({
     height: 200,
   },
   labelContainer: {
-    backgroundColor: "white",
     padding: 10,
     borderRadius: 10,
     marginTop: 10,
   },
   labelText: {
-    color: "blue",
+    color: "white",
     fontSize: 20,
     fontWeight: "bold",
   },

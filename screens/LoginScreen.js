@@ -18,10 +18,8 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 
-//  const BASE_URL = 'http://192.168.0.119:8000'; // Update with your FastAPI server URL
-
-const BASE_URL = 'https://dhqscanner.desuung.org.bt:8443/'; 
-
+ //const BASE_URL = 'http://192.168.0.119:8000'; // Update with your FastAPI server URL
+const BASE_URL = 'http://192.168.128.8:8000'; 
 // const BASE_URL = 'http://202.144.153.106:8000'; 
 
 
@@ -52,7 +50,12 @@ const LoginScreen = () => {
   const navigation = useNavigation();
 
   const handleCIDChange = (text) => {
-    setCID(text);
+  
+    const numericText = text.replace(/\D/g, '');
+    // Limit the input to 11 digits
+    if (numericText.length <= 11) {
+      setCID(numericText);
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -63,57 +66,77 @@ const LoginScreen = () => {
     if (isLoading) {
       return;
     }
-
+  
     const showAlert = (message) => {
       Alert.alert('Error', message, [{ text: 'OK' }], { cancelable: true });
     };
-
+  
+    if (!CID && !password) {
+      showAlert('Please fill in the required values');
+      return;
+    }
+  
+    if (!CID) {
+      showAlert('Please enter your Identity Card Number.');
+      return;
+    }
+  
+    if (!password) {
+      showAlert('Please enter your password.');
+      return;
+    }
     try {
       setIsLoading(true);
-      // Dismiss the keyboard to prevent further input
       Keyboard.dismiss();
-
+    
+      const data = new URLSearchParams();
+      data.append('username', CID);
+      data.append('password', password);
+    
+      console.log('POST data:', data);
+    
       const response = await fetch(`${BASE_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         },
-        body: `username=${CID}&password=${password}`,
+        body: data.toString(),
       });
-
+    
       if (response.ok) {
         const responseData = await response.json();
-
-        // Check if both access_token and userRole are present in the response
-        if (responseData.access_token && responseData.userRole) {
+        console.log('Response Data:', responseData);
+    
+        if (responseData.access_token && responseData.userRole !== null) {
           await AsyncStorage.setItem('access_token', responseData.access_token);
-          console.log('User Role:', responseData.userRole);
-          await AsyncStorage.setItem('userRole', responseData.userRole);
-
+          await AsyncStorage.setItem('userRole', String(responseData.userRole));
           await AsyncStorage.setItem('userId', CID);
-
+    
           if (responseData.redirect_url) {
             navigation.navigate('Tabs', { userRole: responseData.userRole });
           } else {
             navigation.navigate('Login');
           }
+    
+          // setCID('');
+          setPassword('');
         } else {
-          showAlert('Access token or user role is missing');
+          Alert.alert('Error', 'Access token or user role is missing or null in the response', [{ text: 'OK' }], { cancelable: true });
         }
+      } else if (response.status === 401) {
+        Alert.alert('Error', 'Invalid CID number or password', [{ text: 'OK' }], { cancelable: true });
       } else {
-        const errorMessage = await response.text();
-        showAlert(errorMessage);
+        Alert.alert('Error', 'An error occurred. Please try again.', [{ text: 'OK' }], { cancelable: true });
       }
     } catch (error) {
       console.error('Login error:', error);
-      showAlert('An error occurred. Please try again.');
+      Alert.alert('Error', 'An error occurred. Please try again.', [{ text: 'OK' }], { cancelable: true });
     } finally {
       setIsLoading(false);
     }
-  };
+  }    
 
   const handleForgotPassword = () => {
-    // Navigate to the ForgotPasswordScreen when the "Forgot Password?" link is clicked.
     if (!isLoading) {
       navigation.navigate('Password');
     }
@@ -121,13 +144,12 @@ const LoginScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+   
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : null}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -200} // Adjust as needed
-      >
-        <StatusBar style="auto" />
-
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -200} >
+        <StatusBar style="auto" hidden={false} />
         <View style={styles.squareBox} />
         <View style={styles.logoContainer}>
           <Image source={require('../assets/logo.png')} style={styles.logo} />
@@ -205,8 +227,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: width * 0.5, // Adjust width as a percentage of the screen width
-    height: height * 0.18, // Adjust height as a percentage of the screen height
+    width: width * 0.5, 
+    height: height * 0.18, 
     resizeMode: 'contain',
     marginVertical: height * 0.02,
   },
@@ -249,6 +271,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#fff',
     fontSize: 18,
+    fontWeight:'bold'
   },
   loader: {
     marginTop: 10,
@@ -271,11 +294,11 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     alignSelf: 'center',
-    marginBottom: 50,
-    
+    marginBottom: 40,
+    marginLeft:150
   },
   forgotPasswordText: {
-    color: '#4267B2',
+    color: '#f7be6d',
     fontSize: 15,
   },
 
@@ -295,4 +318,3 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
-   

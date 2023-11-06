@@ -28,7 +28,9 @@ const handleOTPEnter = async () => {
 
     const enteredOTP = otp.join('');
 
-    const response = await fetch(`https://dhqscanner.desuung.org.bt:8443/enter-otp?cid=${cid}`, {
+    // const response = await fetch(`http://202.144.153.106:8000/enter-otp?cid=${cid}`, {
+      const response = await fetch(`http://192.168.128.8:8000/enter-otp?cid=${cid}`, {
+      
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
