@@ -31,7 +31,7 @@ const headerWithBorderRadius = StyleSheet.create({
   },
 });
 
-const getTabOptions = (route, iconName, label) => ({
+const getTabOptions = (_route, iconName, label) => ({
   tabBarIcon: ({ focused, size, color }) => (
     <Icon name={focused ? iconName : `${iconName}-outline`} size={size} color={color} />
   ),
