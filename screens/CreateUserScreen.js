@@ -24,6 +24,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
+
 const getTokenFromStorage = async () => {
   try {
     const token = await AsyncStorage.getItem("access_token");
@@ -33,7 +34,7 @@ const getTokenFromStorage = async () => {
   }
 };
 
-const CreateUserscreen = () => {
+const CreateUserscreen = ({navigation}) => {
   const [userData, setUserData] = useState({
     name: "",
     mobile_no: "",
@@ -43,12 +44,17 @@ const CreateUserscreen = () => {
   });
 
   const [showUserProfile, setShowUserProfile] = useState(false);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = React.useState('');
+
+ 
+
   const [loading, setLoading] = useState(false);
 
   const inputRef = useRef(null);
 
-  const USER_DATA_BASE_URL = "http://192.168.128.8:8000/user-details";
+
+
+  const USER_DATA_BASE_URL = "https://attendances.desuung.org.bt/user-details";
 
   const [selectedDesignation, setSelectedDesignation] = useState("");
   const [designationList, setDesignationList] = useState([]);
@@ -62,7 +68,7 @@ const CreateUserscreen = () => {
       };
 
       const response = await fetch(
-        "http://192.168.128.8:8000/designations_list",
+        "https://attendances.desuung.org.bt/designations_list",
         {
           headers,
         }
@@ -97,7 +103,7 @@ const CreateUserscreen = () => {
 
       // If departments data is not in AsyncStorage, fetch it from the backend
       const response = await fetch(
-        "http://192.168.128.8:8000/departments_list",
+        "https://attendances.desuung.org.bt/departments_list",
         { headers }
       );
 
@@ -123,7 +129,7 @@ const CreateUserscreen = () => {
   // Define a function to fetch roles from the backend
   const fetchRoles = async () => {
     try {
-      const response = await fetch("http://192.168.128.8:8000/roles_list");
+      const response = await fetch("https://attendances.desuung.org.bt/roles_list");
       if (response.ok) {
         const data = await response.json();
         setRoles(data);
@@ -150,8 +156,8 @@ const CreateUserscreen = () => {
       const headers = {
         Authorization: `Bearer ${token}`,
       };
-      const response = await fetch(
-        "http://192.168.128.8:8000/employment_types_list",
+      const response = await fetch(        
+        "https://attendances.desuung.org.bt/employment_types_list",
         { headers }
       );
 
@@ -288,7 +294,7 @@ const CreateUserscreen = () => {
 
         console.log("postData:", postData);
 
-        const response = await fetch("http://192.168.128.8:8000/user/", {
+        const response = await fetch("https://attendances.desuung.org.bt/user/", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -301,7 +307,7 @@ const CreateUserscreen = () => {
           Alert.alert("Message Alert.","User Created Successfully");
           console.log("User Created Successfully");
         } else {
-          Alert.alert("Message Alert.","The user already exists.");
+          Alert.alert("Message Alert.","This user already exist.");
           console.log("Failed");
         }
           // Clear user data and selected values for a new entry
@@ -338,9 +344,10 @@ const CreateUserscreen = () => {
 
   return (
     <KeyboardAwareScrollView
-      behavior={Platform.OS === "ios" ? "padding" : null}
-      style={{ flex: 1 }}
-    >
+    contentContainerStyle={styles.container}
+    resetScrollToCoords={{ x: 0, y: 0 }}
+    scrollEnabled
+  >
       <View style={styles.Container}>
         <View style={styles.inputContainer}>
           <View style={styles.coolinput}>
@@ -348,7 +355,6 @@ const CreateUserscreen = () => {
               style={styles.input}
               placeholder="Enter the CID"
               name="input"
-             
               keyboardType="numeric"
               value={inputValue}
               onChangeText={(text) => setInputValue(text)}
@@ -356,14 +362,13 @@ const CreateUserscreen = () => {
             />
           </View>
           <View style={styles.buttonContent}>
-            {loading ? ( // Show loading indicator when loading is true
+            {loading ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
               <TouchableOpacity
                 onPress={createButtonPressed}
-                style={styles.buttonTouchable}
               >
-               <MaterialIcons name="search" size={27} color="#fff" />
+               <MaterialIcons name="search" size={28} color="#fff" />
               </TouchableOpacity>
             )}
           </View>
@@ -561,11 +566,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 20,
     justifyContent:'center',
+    alignItems:'center'
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
+    borderRadius:'100'
   },
   coolinput: {
     display: "flex",
@@ -598,11 +605,7 @@ const styles = StyleSheet.create({
     padding: 10,
     transition: "all 0.2s",
   },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 20,
-  },
+
   userInfoRow: {
     flexDirection: "row",
     alignItems: "center",

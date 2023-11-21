@@ -45,8 +45,8 @@ const ScanScreen = () => {
     setScanned(true);
 
     try {
-      const response = await axios.post('http://192.168.128.8:8000/api/qr-scan', {
-        //const response = await axios.post('http://202.144.153.106:8000/api/qr-scan', {
+      const response = await axios.post('https://attendances.desuung.org.bt/api/qr-scan', {
+       
 
       
         cid: userId,
@@ -103,17 +103,18 @@ const ScanScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.txt}>Place the QR code inside the frame</Text>
-      <View style={styles.cameraContainer}>
+     
+     <View style={[styles.cameraContainer, { height: Dimensions.get('window').height }]}>
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
           style={styles.scanner} // Use a custom style for the scanner
         />
 
         {isLoading && (
-          <ActivityIndicator size="large" color="blue" style={styles.loadingIndicator} />
+          <ActivityIndicator size="large" color="orange" style={styles.loadingIndicator} />
         )}
       </View>
+      <Text style={styles.txt}>Place the QR code inside the frame</Text>
       <View style={styles.cornersContainer}>
         <View style={styles.topLeftCorner} />
         <View style={styles.topRightCorner} />
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'grey',
+  
   },
   errorText: {
     fontSize: 18,
@@ -144,19 +145,21 @@ const styles = StyleSheet.create({
   },
 
   cameraContainer: {
+    marginTop: 0, // Ensure there is no top margin
     position: 'relative',
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
     aspectRatio: 1,
-    overflow: 'hidden',
   },
+  
   cornersContainer: {
     position: 'absolute',
-    top: '25%',
+    top: '30%',
     left: '15%',
     width: '70%',
     aspectRatio: 1,
     zIndex: 1,
+  
   },
 
   scanner: {
@@ -170,7 +173,7 @@ const styles = StyleSheet.create({
     height: '15%',
     borderTopWidth: 8,
     borderLeftWidth: 8,
-    borderColor: 'orange',
+    borderColor: '#ff8c00',
   },
   topRightCorner: {
     position: 'absolute',
@@ -180,7 +183,7 @@ const styles = StyleSheet.create({
     height: '15%',
     borderTopWidth: 8,
     borderRightWidth: 8,
-    borderColor: 'orange',
+    borderColor: '#ff8c00',
   },
   bottomLeftCorner: {
     position: 'absolute',
@@ -190,7 +193,7 @@ const styles = StyleSheet.create({
     height: '15%',
     borderBottomWidth: 8,
     borderLeftWidth: 8,
-    borderColor: 'orange',
+    borderColor: '#ff8c00',
   },
   bottomRightCorner: {
     position: 'absolute',
@@ -200,7 +203,7 @@ const styles = StyleSheet.create({
     height: '15%',
     borderBottomWidth: 8,
     borderRightWidth: 8,
-    borderColor: 'orange',
+    borderColor: '#ff8c00',
   },
   loadingIndicator: {
     position: 'absolute',
@@ -209,9 +212,13 @@ const styles = StyleSheet.create({
     right: 0,
   },
   txt: {
-    color: 'white',
-    fontSize: 17,
-    marginBottom: 30,
+    color: '#fff4e6',
+    fontSize: 18,
+    position:'absolute',
+    top:80,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding:15,
+    borderRadius:50
   },
 });
 

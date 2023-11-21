@@ -18,10 +18,8 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 
- //const BASE_URL = 'http://192.168.0.119:8000'; // Update with your FastAPI server URL
-const BASE_URL = 'http://192.168.128.8:8000'; 
-// const BASE_URL = 'http://202.144.153.106:8000'; 
 
+const BASE_URL = 'https://attendances.desuung.org.bt'; 
 
 const { width, height } = Dimensions.get('window');
 
@@ -88,13 +86,11 @@ const LoginScreen = () => {
     try {
       setIsLoading(true);
       Keyboard.dismiss();
-    
+
       const data = new URLSearchParams();
       data.append('username', CID);
       data.append('password', password);
-    
-      console.log('POST data:', data);
-    
+
       const response = await fetch(`${BASE_URL}/login`, {
         method: 'POST',
         headers: {
@@ -102,26 +98,32 @@ const LoginScreen = () => {
         },
         body: data.toString(),
       });
-    
+
       if (response.ok) {
         const responseData = await response.json();
-        console.log('Response Data:', responseData);
-    
-        if (responseData.access_token && responseData.userRole !== null) {
+
+        if (responseData.access_token && responseData.session_token && responseData.userRole !== null) {
+          console.log('Access Token:', responseData.access_token);
+          console.log('Refresh Token:', responseData.session_token);
+          console.log('User Role:', responseData.userRole);
+
           await AsyncStorage.setItem('access_token', responseData.access_token);
+          await AsyncStorage.setItem('refresh_token', responseData.session_token);
           await AsyncStorage.setItem('userRole', String(responseData.userRole));
           await AsyncStorage.setItem('userId', CID);
+
     
-          if (responseData.redirect_url) {
-            navigation.navigate('Tabs', { userRole: responseData.userRole });
-          } else {
-            navigation.navigate('Login');
-          }
+           if (responseData.redirect_url) {
+      navigation.navigate('Tabs', { userRole: responseData.userRole });
+    } else {
+      navigation.navigate('Login');
+    }
     
           // setCID('');
           setPassword('');
         } else {
-          Alert.alert('Error', 'Access token or user role is missing or null in the response', [{ text: 'OK' }], { cancelable: true });
+          console.error('Invalid response data:', responseData);
+          Alert.alert('Error', 'Access token, refresh token, or user role is missing or null in the response', [{ text: 'OK' }], { cancelable: true });
         }
       } else if (response.status === 401) {
         Alert.alert('Error', 'Invalid CID number or password', [{ text: 'OK' }], { cancelable: true });
@@ -134,7 +136,7 @@ const LoginScreen = () => {
     } finally {
       setIsLoading(false);
     }
-  }    
+  }
 
   const handleForgotPassword = () => {
     if (!isLoading) {

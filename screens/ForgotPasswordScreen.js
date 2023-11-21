@@ -45,8 +45,8 @@ const ForgotPasswordScreen = () => {
     try {
       setIsLoading(true);
   
-      const response = await fetch('http://192.168.128.8:8000/forgot-password', {
-       // const response = await fetch('http://202.144.153.106:8000/forgot-password', {
+      const response = await fetch('https://attendances.desuung.org.bt/forgot-password', {
+        // const response = await fetch('http://192.168.128.8:8000/forgot-password', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +79,7 @@ const ForgotPasswordScreen = () => {
     <View style={styles.container}>
       <View style={styles.squareBox} />
       <View style={styles.imageContainer}>
-        <Image source={require("../assets/logo.png")} style={styles.image} />
+        <Image source={require("../assets/forgot.png")} style={styles.image} />
       </View>
       <Text style={styles.title}>Forgot Password?</Text>
       <TextInput

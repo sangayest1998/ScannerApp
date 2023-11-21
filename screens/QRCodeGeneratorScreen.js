@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 
 const getTokenFromStorage = async () => {
   try {
@@ -12,7 +14,7 @@ const getTokenFromStorage = async () => {
   }
 };
 
-const BASE_URL = "http://192.168.128.8:8000";
+const BASE_URL = "https://attendances.desuung.org.bt";
 //const BASE_URL = "http://202.144.153.106:8000";
 
 const QRCodeGenerator = () => {
@@ -95,6 +97,14 @@ const QRCodeGenerator = () => {
           <View style={styles.labelContainer}>
             <Text style={styles.labelText}>{labelText}</Text>
           </View>
+          <View style={styles.iconContainer}>
+            {showCheckInButton ? (
+              <MaterialCommunityIcons name="close" size={50} color="red" />
+            ) : (
+             
+              <MaterialCommunityIcons name="check" size={50} color="green" />
+            )}
+          </View>
         </View>
       )}
 
@@ -156,6 +166,11 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     fontSize: 16,
+    marginTop: 10,
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: 10,
   },
 });

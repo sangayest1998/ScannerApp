@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, Alert, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, Alert, StyleSheet, TouchableOpacity, TextInput ,Image} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 export default function EnterOTPScreen() {
@@ -28,8 +28,8 @@ const handleOTPEnter = async () => {
 
     const enteredOTP = otp.join('');
 
-    // const response = await fetch(`http://202.144.153.106:8000/enter-otp?cid=${cid}`, {
-      const response = await fetch(`http://192.168.128.8:8000/enter-otp?cid=${cid}`, {
+    // const response = await fetch(`http://192.168.128.8:8000/enter-otp?cid=${cid}`, {
+      const response = await fetch(`https://attendances.desuung.org.bt/enter-otp?cid=${cid}`, {
       
       method: 'POST',
       headers: {
@@ -56,6 +56,9 @@ const handleOTPEnter = async () => {
   return (
     <>
       <View style={styles.squareBox} />
+      <View style={styles.imageContainer}>
+        <Image source={require("../assets/mail.png")} style={styles.image} />
+      </View>
       <View style={styles.container}>
         <Text style={styles.title}>Email Verification</Text>
         <Text style={styles.title1}>Enter the 6-digit code sent to you</Text>
@@ -107,7 +110,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 40,
-    color:'#f05e16'
+    color:'black'
   },
   title1: {
     fontSize: 14,
@@ -138,6 +141,13 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  imageContainer: {
+    alignItems: "center",
+  },
+  image: {
+    width: 200,
+    height: 200,
   },
 });
 

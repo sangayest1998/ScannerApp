@@ -10,11 +10,18 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons, MaterialCommunityIcons, Zocial, Entypo, FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import {
+  Ionicons,
+  MaterialCommunityIcons,
+  Zocial,
+  Entypo,
+  FontAwesome,
+  MaterialIcons,
+} from '@expo/vector-icons';
 
-const USER_DATA_BASE_URL = 'http://192.168.128.8:8000/profile';
-const PROFILE_IMAGE_BASE_URL = 'http://192.168.128.8:8000/update/profile-picture';
-const PROFILE_PICTURE_BASE_URL = 'http://192.168.128.8:8000/get/profile-picture';
+const USER_DATA_BASE_URL = 'https://attendances.desuung.org.bt/profile';
+const PROFILE_IMAGE_BASE_URL = 'https://attendances.desuung.org.bt/update/profile-picture';
+const PROFILE_PICTURE_BASE_URL = 'https://attendances.desuung.org.bt/get/profile-picture';
 
 const ProfileScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
@@ -31,7 +38,7 @@ const ProfileScreen = ({ navigation }) => {
 
   useEffect(() => {
     getPermission();
-    retrieveProfilePicture(); // Retrieve profile picture URL from AsyncStorage
+    retrieveProfilePicture(); // Call retrieveProfilePicture here
     fetchUserData();
   }, []);
 
@@ -42,17 +49,6 @@ const ProfileScreen = ({ navigation }) => {
         'Permission Required',
         'Please grant permission to access the gallery to upload a profile picture.'
       );
-    }
-  };
-
-  const retrieveProfilePicture = async () => {
-    try {
-      const profileImageUrl = await AsyncStorage.getItem('profile_picture_url');
-      if (profileImageUrl) {
-        setImage(profileImageUrl);
-      }
-    } catch (error) {
-      console.error('Error retrieving profile picture URL:', error);
     }
   };
 
@@ -97,7 +93,7 @@ const ProfileScreen = ({ navigation }) => {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 1,
+        quality: 0.8,
       });
 
       if (result.canceled) {
@@ -122,14 +118,14 @@ const ProfileScreen = ({ navigation }) => {
 
       if (response.ok) {
         const imageURL = await response.json();
-        const imageToken = imageURL.url.replace('/static/images/', '');
-        const imageUrl = `${PROFILE_PICTURE_BASE_URL}/${imageToken}`;
-        setImage(imageUrl);
+        const imageToken = imageURL.url; // Use the entire URL from the response
+        setImage(imageToken);
         setImageError(false);
 
-        await AsyncStorage.setItem('profile_picture_url', imageUrl); // Store updated URL
+        await AsyncStorage.setItem('profile_picture_url', imageToken); // Store updated URL
 
-        fetchUserData();
+        // Refresh the profile picture immediately after updating
+        retrieveProfilePicture();
       } else {
         const responseText = await response.text();
         console.error(
@@ -139,19 +135,68 @@ const ProfileScreen = ({ navigation }) => {
           responseText
         );
         setImageError(true);
+        Alert.alert('Error', 'Failed to upload profile picture. Please try again.');
       }
     } catch (error) {
       console.error('Error uploading profile picture:', error.message);
+      setImageError(true);
+      Alert.alert('Error', 'An error occurred. Please try again.');
+    }
+  };
+
+  const retrieveProfilePicture = async () => {
+    try {
+      const access_token = await AsyncStorage.getItem('access_token');
+
+      const response = await fetch(PROFILE_PICTURE_BASE_URL, {
+        method: 'GET',
+        headers: {
+          Authorization:`Bearer ${access_token}`,
+        },
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+
+        // Convert Blob to Base64 string
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64data = reader.result;
+          setImage(base64data);
+          setImageError(false);
+        };
+        reader.readAsDataURL(blob);
+      } else if (response.status === 404) {
+        setImage(null);
+        setImageError(false);
+      } else {
+        // Log the error details
+        console.error('Error retrieving profile picture. Status:', response.status);
+        const responseText = await response.text();
+        console.error('Error response:', responseText);
+
+        // Set the error state
+        setImageError(true);
+      }
+    } catch (error) {
+      // Log any unexpected errors
+      console.error('Unexpected error retrieving profile picture:', error);
       setImageError(true);
     }
   };
 
   const handleLogout = async () => {
     try {
+      // Clear stored user data and authentication information
       await AsyncStorage.removeItem('access_token');
+      await AsyncStorage.removeItem('userRole');
+      await AsyncStorage.removeItem('userId');
+      await AsyncStorage.removeItem('profile_picture_url'); // Optionally, clear profile picture URL
+
+      // Navigate to the login screen
       navigation.navigate('Login');
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error('Error during logout:', error);
     }
   };
 
@@ -184,7 +229,12 @@ const ProfileScreen = ({ navigation }) => {
 
       <View style={styles.userInfoContainer}>
         <View style={styles.userInfoRow}>
-          <Ionicons name="ios-person-circle" size={24} color="orange" style={styles.icon} />
+          <Ionicons
+            name="ios-person-circle"
+            size={24}
+            color="orange"
+            style={styles.icon}
+          />
           <Text style={styles.staticLabel}>Name:</Text>
           <TextInput
             style={styles.userInfoInput}
@@ -194,7 +244,12 @@ const ProfileScreen = ({ navigation }) => {
           />
         </View>
         <View style={styles.userInfoRow}>
-          <MaterialCommunityIcons name="clipboard-account" size={24} color="orange" style={styles.icon} />
+          <MaterialCommunityIcons
+            name="clipboard-account"
+            size={24}
+            color="orange"
+            style={styles.icon}
+          />
           <Text style={styles.staticLabel}>DID:</Text>
           <TextInput
             style={styles.userInfoInput}

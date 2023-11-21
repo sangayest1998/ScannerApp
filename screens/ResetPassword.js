@@ -226,6 +226,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Image
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
@@ -269,9 +270,9 @@ export default function ResetPasswordScreen() {
       try {
         console.log("Sending reset request:", resetData);
 
-        // const response = await fetch("http://202.144.153.106:8000/reset-password", {
+        // const response = await fetch("http://192.168.128.8:8000/reset-password", {
        
-          const response = await fetch("http://192.168.128.8:8000/reset-password", {
+         const response = await fetch("https://attendances.desuung.org.bt/reset-password", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -307,9 +308,12 @@ export default function ResetPasswordScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.squareBox} />
+
       <View style={styles.content}>
         <Text style={styles.title}>Reset Password</Text>
-
+  <View style={styles.imageContainer}>
+        <Image source={require("../assets/reset.png")} style={styles.image} />
+      </View>
         <View
           style={[
             styles.passwordContainer,
@@ -400,7 +404,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 40,
     fontWeight: "bold",
-    color: "#f05e16",
+    color: "black",
     textAlign:'center'
   },
   passwordContainer: {
@@ -440,5 +444,13 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     marginBottom: 10,
+  },
+  imageContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  image: {
+    width: 200,
+    height: 200,
   },
 });
