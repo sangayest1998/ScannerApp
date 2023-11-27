@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Alert, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Alert, Dimensions, ToastAndroid } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused
+import { BackHandler } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native'; 
 
 const ScanScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -10,35 +13,10 @@ const ScanScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState('');
   const [token, setToken] = useState('');
+  const isFocused = useIsFocused(); // Use useIsFocused hook
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === 'granted');
-    })();
 
-    AsyncStorage.getItem('userId')
-      .then((value) => {
-        if (value) {
-          setUserId(value);
-        }
-      })
-      .catch((error) => {
-        console.error('Error retrieving userId:', error);
-      });
-
-    AsyncStorage.getItem('access_token') // Use 'access_token' key to retrieve the token
-      .then((value) => {
-        if (value) {
-          setToken(value);
-        }
-      })
-      .catch((error) => {
-        console.error('Error retrieving token:', error);
-      });
-  }, []);
-
-  const handleBarCodeScanned = async ({ type, data }) => {
+  const handleBarCodeScanned = async ({ data }) => {
     if (isLoading) return;
 
     setIsLoading(true);
@@ -46,9 +24,6 @@ const ScanScreen = () => {
 
     try {
       const response = await axios.post('https://attendances.desuung.org.bt/api/qr-scan', {
-       
-
-      
         cid: userId,
         token: data,
       }, {
@@ -89,6 +64,68 @@ const ScanScreen = () => {
     setScanned(false);
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const backPressCount = { count: 0 };
+
+      const onBackPress = () => {
+        // Handle the back press as needed
+        backPressCount.count += 1;
+
+        if (backPressCount.count >= 2) {
+          // If back pressed twice, exit the app
+          BackHandler.exitApp();
+        } else {
+          // Show a toast to inform the user
+          ToastAndroid.show("Press back again to exit", ToastAndroid.SHORT);
+          
+          // Reset back press count after a delay (e.g., 2 seconds)
+          setTimeout(() => {
+            backPressCount.count = 2;
+          }, 2000);
+        }
+
+        // Return true to disable the default back navigation
+        return true;
+      };
+
+      // Add event listener for the hardware back press
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => {
+        // Cleanup the event listener on component unmount
+        backHandler.remove();
+      };
+    }, [])
+  );
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === 'granted');
+    })();
+
+    AsyncStorage.getItem('userId')
+      .then((value) => {
+        if (value) {
+          setUserId(value);
+        }
+      })
+      .catch((error) => {
+        console.error('Error retrieving userId:', error);
+      });
+
+    AsyncStorage.getItem('access_token')
+      .then((value) => {
+        if (value) {
+          setToken(value);
+        }
+      })
+      .catch((error) => {
+        console.error('Error retrieving token:', error);
+      });
+  }, []);
+
   if (hasPermission === null) {
     return (
       <View style={styles.container}>
@@ -103,12 +140,13 @@ const ScanScreen = () => {
 
   return (
     <View style={styles.container}>
-     
-     <View style={[styles.cameraContainer, { height: Dimensions.get('window').height }]}>
+      <View style={[styles.cameraContainer, { height: Dimensions.get('window').height }]}>
+      {hasPermission && isFocused && (
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-          style={styles.scanner} // Use a custom style for the scanner
+          style={StyleSheet.absoluteFillObject}
         />
+      )}
 
         {isLoading && (
           <ActivityIndicator size="large" color="orange" style={styles.loadingIndicator} />
@@ -125,12 +163,12 @@ const ScanScreen = () => {
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  
   },
   errorText: {
     fontSize: 18,
@@ -143,7 +181,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
   },
-
   cameraContainer: {
     marginTop: 0, // Ensure there is no top margin
     position: 'relative',
@@ -151,7 +188,6 @@ const styles = StyleSheet.create({
     height: Dimensions.get('window').height,
     aspectRatio: 1,
   },
-  
   cornersContainer: {
     position: 'absolute',
     top: '30%',
@@ -159,9 +195,7 @@ const styles = StyleSheet.create({
     width: '70%',
     aspectRatio: 1,
     zIndex: 1,
-  
   },
-
   scanner: {
     flex: 1,
   },
@@ -205,23 +239,15 @@ const styles = StyleSheet.create({
     borderRightWidth: 8,
     borderColor: '#ff8c00',
   },
-  loadingIndicator: {
-    position: 'absolute',
-    top: '50%',
-    left: 0,
-    right: 0,
-  },
   txt: {
     color: '#fff4e6',
     fontSize: 18,
-    position:'absolute',
-    top:80,
+    position: 'absolute',
+    top: 80,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding:15,
-    borderRadius:50
+    padding: 15,
+    borderRadius: 50,
   },
 });
 
 export default ScanScreen;
-
-
