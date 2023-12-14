@@ -5,7 +5,6 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
-  Platform,
   Alert,
   ActivityIndicator,
   Keyboard,
