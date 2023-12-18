@@ -83,11 +83,11 @@ const AttendanceReportScreen = () => {
         onChangeText={(text) => setCid(text)}
         value={cid}
       />
-      <Button
-        title={isLoading ? 'Generating Report...' : 'Generate Report'}
-        onPress={generateReport}
-        disabled={isLoading}
-      />
+     <Button
+  title={isLoading ? 'Generating Report...' : 'Generate Report'}
+  onPress={generateReport}
+  disabled={isLoading || cid.trim() === ''} // Disable the button if CID is empty
+/>
       <View style={styles.spinner}>
         {isLoading && <ActivityIndicator size="small" color="#0000ff" />}
       </View>
