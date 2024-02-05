@@ -80,7 +80,7 @@ export default function MonthlyReportScreen() {
     const filename = `attendance_report_of_${startDate}_${endDate}.csv`;
     const queryParams = `?start_date=${startDate}&end_date=${endDate}`;
     
-    const apiUrl = `https://attendances.desuung.org.bt/attendance-report${queryParams}`;
+    const apiUrl = `https://attendance.desuung.org.bt/attendance-report${queryParams}`;
 
     try {
       const result = await FileSystem.downloadAsync(

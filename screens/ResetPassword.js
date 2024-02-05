@@ -53,7 +53,7 @@ export default function ResetPasswordScreen() {
 
         // const response = await fetch("http://192.168.128.8:8000/reset-password", {
        
-         const response = await fetch("https://attendances.desuung.org.bt/reset-password", {
+         const response = await fetch("https://attendance.desuung.org.bt/reset-password", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

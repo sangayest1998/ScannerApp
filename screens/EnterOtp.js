@@ -29,7 +29,7 @@ const handleOTPEnter = async () => {
     const enteredOTP = otp.join('');
 
     // const response = await fetch(`http://192.168.128.8:8000/enter-otp?cid=${cid}`, {
-      const response = await fetch(`https://attendances.desuung.org.bt/enter-otp?cid=${cid}`, {
+      const response = await fetch(`https://attendance.desuung.org.bt/enter-otp?cid=${cid}`, {
       
       method: 'POST',
       headers: {

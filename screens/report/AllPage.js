@@ -29,7 +29,7 @@ export default function MonthlyReportScreen() {
   }, []);
 
   const downloadFromAPI = async () => {
-    const apiUrl = "https://attendances.desuung.org.bt/all-attendance";
+    const apiUrl = "https://attendance.desuung.org.bt/all-attendance";
 
     try {
       const result = await FileSystem.downloadAsync(

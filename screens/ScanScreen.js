@@ -23,7 +23,7 @@ const ScanScreen = () => {
     setScanned(true);
 
     try {
-      const response = await axios.post('https://attendances.desuung.org.bt/api/qr-scan', {
+      const response = await axios.post('https://attendance.desuung.org.bt/api/qr-scan', {
         cid: userId,
         token: data,
       }, {

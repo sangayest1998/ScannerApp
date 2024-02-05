@@ -45,7 +45,7 @@ const ForgotPasswordScreen = () => {
     try {
       setIsLoading(true);
   
-      const response = await fetch('https://attendances.desuung.org.bt/forgot-password', {
+      const response = await fetch('https://attendance.desuung.org.bt/forgot-password', {
         // const response = await fetch('http://192.168.128.8:8000/forgot-password', {
         method: "POST",
         headers: {
