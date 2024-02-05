@@ -53,7 +53,7 @@ const CreateUserscreen = ({navigation}) => {
 
 
 
-  const USER_DATA_BASE_URL = "https://attendances.desuung.org.bt/user-details";
+  const USER_DATA_BASE_URL = "https://attendance.desuung.org.bt/user-details";
 
   const [selectedDesignation, setSelectedDesignation] = useState("");
   const [designationList, setDesignationList] = useState([]);
@@ -67,7 +67,7 @@ const CreateUserscreen = ({navigation}) => {
       };
 
       const response = await fetch(
-        "https://attendances.desuung.org.bt/designations_list",
+        "https://attendance.desuung.org.bt/designations_list",
         {
           headers,
         }
@@ -102,7 +102,7 @@ const CreateUserscreen = ({navigation}) => {
 
       // If departments data is not in AsyncStorage, fetch it from the backend
       const response = await fetch(
-        "https://attendances.desuung.org.bt/departments_list",
+        "https://attendance.desuung.org.bt/departments_list",
         { headers }
       );
 
@@ -128,7 +128,7 @@ const CreateUserscreen = ({navigation}) => {
   // Define a function to fetch roles from the backend
   const fetchRoles = async () => {
     try {
-      const response = await fetch("https://attendances.desuung.org.bt/roles_list");
+      const response = await fetch("https://attendance.desuung.org.bt/roles_list");
       if (response.ok) {
         const data = await response.json();
         setRoles(data);
@@ -156,7 +156,7 @@ const CreateUserscreen = ({navigation}) => {
         Authorization: `Bearer ${token}`,
       };
       const response = await fetch(        
-        "https://attendances.desuung.org.bt/employment_types_list",
+        "https://attendance.desuung.org.bt/employment_types_list",
         { headers }
       );
 
@@ -293,7 +293,7 @@ const CreateUserscreen = ({navigation}) => {
 
         console.log("postData:", postData);
 
-        const response = await fetch("https://attendances.desuung.org.bt/user/", {
+        const response = await fetch("https://attendance.desuung.org.bt/user/", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
