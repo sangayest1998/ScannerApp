@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "DHQ Scanner",
-    "slug": "desuung-app",
+    "slug": "desuung-scanner",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -30,7 +30,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "84d0e5f2-5b41-4612-af78-6d1a9db29370"
+        "projectId": "eeb8f0ac-9134-4c24-989c-5a84f9b6611c"
       }
     },
     "owner": "atbitchmdagunner"
