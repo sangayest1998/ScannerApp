@@ -9,10 +9,12 @@ import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import EnterOtp from './screens/EnterOtp';
 import ResetPasswordScreen from './screens/ResetPassword';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {usePreventScreenCapture} from "expo-screen-capture"
 
 const Stack = createStackNavigator();
 
 const AuthCheck = () => {
+  usePreventScreenCapture();
   const navigation = useNavigation();
 
   useEffect(() => {
