@@ -7,6 +7,8 @@ import { useIsFocused } from '@react-navigation/native'; // Import useIsFocused
 import { BackHandler } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native'; 
 
+
+
 const ScanScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
