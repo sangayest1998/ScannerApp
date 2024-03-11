@@ -14,7 +14,9 @@ const getTokenFromStorage = async () => {
   }
 };
 
-const BASE_URL = "https://attendance.desuung.org.bt";
+// const BASE_URL = "https://attendance.desuung.org.bt";
+
+const BASE_URL = "http://192.168.0.108:8000";
 
 const QRCodeGenerator = () => {
   const [checkInQR, setCheckInQR] = useState(null);

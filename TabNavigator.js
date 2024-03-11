@@ -10,6 +10,7 @@ import QRCodeGeneratorScreen from './screens/QRCodeGeneratorScreen';
 import NotificationScreen from './screens/NotificationScreen';
 import ProfileScreen from './screens/ProfileScreen';
 
+
 const Tab = createBottomTabNavigator();
 
 const headerStyle = {
@@ -76,13 +77,22 @@ const TabNavigator = ({ route }) => {
         <Tab.Screen name="Report" component={ReportScreen} options={getTabOptions(route, 'ios-list', 'Report')} />
       ) : null}
 
-      {userRole === 'QRGENERATOR' ? (
-        <Tab.Screen
-          name="QRGenerator"
-          component={QRCodeGeneratorScreen}
-          options={getTabOptions(route, 'ios-qr-code', 'QR Generator')}
-        />
-      ) : null}
+{userRole === 'QRGENERATOR' ? (
+  <Tab.Screen
+    name="QRGenerator"
+    component={QRCodeGeneratorScreen}
+    options={getTabOptions(route, 'ios-qr-code', 'QR Generator')}
+  />
+) : null}
+
+{userRole === 'FIELD_GOJAY' ? (
+  <Tab.Screen
+    name="QRGenerator"
+    component={QRCodeGeneratorScreen}
+    options={getTabOptions(route, 'ios-qr-code', 'QR Generator')}
+  />
+) : null}
+
 
       {userRole === 'HR' || userRole === 'STAFF' ? (
         <Tab.Screen
@@ -92,7 +102,7 @@ const TabNavigator = ({ route }) => {
         />
       ) : null}
 
-      {userRole === 'ADMIN' || userRole === 'HR' || userRole === 'STAFF' ||userRole=='QRGENERATOR'? (
+      {userRole === 'ADMIN' || userRole === 'HR' || userRole === 'STAFF' ||userRole=='QRGENERATOR' ||userRole==='FIELD_GOJAY'? (
         <Tab.Screen
           name="Profile"
           component={ProfileScreen}

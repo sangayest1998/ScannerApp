@@ -31,11 +31,12 @@ const AuthCheck = () => {
             initialScreen = 'Scan';
             break;
           case 'QRGENERATOR':
+          case 'FIELD_GOJAY':
             initialScreen = 'QRGenerator';
             break;
-          default:
-            initialScreen = 'Login';
-            break;
+          // default:
+          //   initialScreen = 'Login';
+          //   break;
         }
 
         // Pass userRole as a parameter to TabNavigator

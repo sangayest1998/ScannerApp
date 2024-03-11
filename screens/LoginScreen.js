@@ -21,7 +21,9 @@ import { StatusBar } from "expo-status-bar";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 
-const BASE_URL = "https://attendance.desuung.org.bt";
+// const BASE_URL = "https://attendance.desuung.org.bt";
+
+const BASE_URL = "http://192.168.0.108:8000";
 
 const { width, height } = Dimensions.get("window");
 

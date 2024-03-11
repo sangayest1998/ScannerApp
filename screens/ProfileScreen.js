@@ -19,11 +19,18 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 
-const USER_DATA_BASE_URL = "https://attendance.desuung.org.bt/profile";
+// const USER_DATA_BASE_URL = "https://attendance.desuung.org.bt/profile";
+const USER_DATA_BASE_URL = "http://192.168.0.108:8000/profile";
+
+// const PROFILE_IMAGE_BASE_URL =
+//   "https://attendance.desuung.org.bt/update/profile-picture";
 const PROFILE_IMAGE_BASE_URL =
-  "https://attendance.desuung.org.bt/update/profile-picture";
+  "http://192.168.0.108:8000/profile/update/profile-picture";
+
+// const PROFILE_PICTURE_BASE_URL =
+//   "https://attendance.desuung.org.bt/get/profile-picture";
 const PROFILE_PICTURE_BASE_URL =
-  "https://attendance.desuung.org.bt/get/profile-picture";
+  "http://192.168.0.108:8000/profile/get/profile-picture";
 
 const ProfileScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
