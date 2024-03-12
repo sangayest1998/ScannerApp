@@ -55,7 +55,11 @@ const AttendanceReportScreen = () => {
       setIsLoading(true); // Set isLoading to true when report generation starts
 
       const storedToken = await AsyncStorage.getItem('access_token');
-      const response = await fetch(`https://attendance.desuung.org.bt/attendance-report/${cid}`, {
+
+      // const response = await fetch(`https://attendance.desuung.org.bt/attendance-report/${cid}`, {
+
+      const response = await fetch(`http://192.168.0.108:8000/attendance-report/${cid}`, {
+
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

@@ -29,7 +29,9 @@ export default function MonthlyReportScreen() {
   }, []);
 
   const downloadFromAPI = async () => {
-    const apiUrl = "https://attendance.desuung.org.bt/all-attendance";
+    // const apiUrl = "https://attendance.desuung.org.bt/all-attendance";
+
+    const apiUrl = "http://192.168.0.108:8000/all-attendance";
 
     try {
       const result = await FileSystem.downloadAsync(
